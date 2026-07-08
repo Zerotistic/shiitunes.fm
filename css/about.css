@@ -2,8 +2,8 @@
 
 .about-view {
   container-type: inline-size;
-  gap: 22px;
-  padding: 16px 0;
+  gap: 16px;
+  padding: 10px 0 16px;
 }
 
 .about-view.active {
@@ -31,7 +31,7 @@
    * mobile breakpoint. */
   grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1fr);
   overflow: hidden;
-  padding: 28px 38px;
+  padding: 20px 32px;
 }
 
 .chibi-stage {
@@ -42,7 +42,7 @@
   display: block;
   height: auto;
   margin: 0 auto;
-  max-width: 340px;
+  max-width: 290px;
   width: 100%;
 }
 
@@ -360,14 +360,14 @@
 }
 
 .about-hero-copy h2 {
-  font-size: 30px;
+  font-size: 27px;
 }
 
 .about-tagline {
   color: var(--text-soft);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 1.55;
+  line-height: 1.5;
   margin: 0;
   max-width: 58ch;
 }
@@ -388,13 +388,13 @@
   display: grid;
   gap: 2px;
   justify-items: start;
-  padding: 12px 14px;
+  padding: 10px 14px;
 }
 
 .stat-number {
   color: var(--amber);
   font-family: "Baloo 2", "Quicksand", sans-serif;
-  font-size: 26px;
+  font-size: 23px;
   font-variant-numeric: tabular-nums;
   font-weight: 800;
   line-height: 1;
@@ -413,8 +413,10 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-/* Narrower main columns (e.g. with the now-playing panel open): 2×2. */
-@container (max-width: 980px) {
+/* Genuinely narrow main columns: 2×2. (A ~850px column — the desktop
+ * norm with the now-playing panel open — still fits four across, and the
+ * single row is what keeps the whole view scroll-free.) */
+@container (max-width: 760px) {
   .about-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -424,9 +426,9 @@
   background: var(--panel-soft);
   border-radius: var(--radius-md);
   display: grid;
-  gap: 8px;
+  gap: 6px;
   justify-items: start;
-  padding: 18px;
+  padding: 14px 16px;
   transition: background 160ms ease, transform 160ms ease;
 }
 
@@ -458,9 +460,9 @@
   border-radius: 10px;
   color: var(--amber);
   display: inline-flex;
-  height: 34px;
+  height: 30px;
   justify-content: center;
-  width: 34px;
+  width: 30px;
 }
 
 .about-card-icon svg {
@@ -509,7 +511,7 @@
   display: flex;
   gap: 18px;
   overflow: hidden;
-  padding: 20px 24px;
+  padding: 16px 22px;
   position: relative;
   text-decoration: none;
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
@@ -579,3 +581,57 @@
 }
 
 
+
+/* Short desktop viewports (e.g. 768px-tall laptops): tighten the leading
+ * roles so the view still fits without scrolling. Mobile keeps its own
+ * stacked layout — this only applies beside the desktop breakpoint. */
+@media (max-height: 820px) and (min-width: 1081px) {
+  .about-view {
+    gap: 10px;
+    padding: 6px 0 10px;
+  }
+
+  .about-hero {
+    padding: 12px 24px;
+  }
+
+  .about-hero-copy {
+    gap: 7px;
+  }
+
+  .chibi-svg {
+    max-width: 185px;
+  }
+
+  .about-stat {
+    padding: 8px 12px;
+  }
+
+  .about-hero-copy h2 {
+    font-size: 23px;
+  }
+
+  .about-tagline {
+    font-size: 13px;
+  }
+
+  .stat-number {
+    font-size: 20px;
+  }
+
+  .about-card {
+    padding: 11px 13px;
+  }
+
+  .about-card > span:last-child {
+    font-size: 12px;
+  }
+
+  .about-outro {
+    padding: 10px 18px;
+  }
+
+  .outro-copy > span {
+    font-size: 12.5px;
+  }
+}
