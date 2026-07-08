@@ -1,0 +1,516 @@
+/* ------------------------------ breakpoints ----------------------------- */
+/* One mobile breakpoint (1080px) plus a narrow-phone tweak (460px). The old
+ * 1024/1080 split created a hybrid dead zone in between. */
+
+@media (max-width: 1080px) {
+  :root {
+    --content-pad: 20px;
+    --player-height: 88px;
+  }
+
+  body {
+    background-size: 120px 90px, 180px 150px, auto;
+  }
+
+  .app-shell {
+    display: block;
+    height: auto;
+    padding-bottom: var(--player-height);
+  }
+
+  .sidebar {
+    align-items: center;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 16px 20px 12px;
+  }
+
+  .brand {
+    min-height: 44px;
+  }
+
+  .nav {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .nav-item {
+    flex-direction: column;
+    gap: 3px;
+    height: 52px;
+    justify-content: center;
+    padding: 5px 3px;
+  }
+
+  .nav-item span {
+    display: block;
+    font-size: 12px;
+    line-height: 14px;
+  }
+
+  /* The left-edge thread reads wrong on stacked column items — a soft fill
+   * marks the active tab instead. */
+  .nav-item.active {
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: none;
+  }
+
+  /* One single row: the PLAYLISTS label and + sit inline with a scrolling
+   * strip of compact name-only chips, so many playlists can't grow the
+   * header and push the view below the fold. Library-only — on Radio/About
+   * the strip is dead weight. */
+  .playlists-block {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    grid-column: 1 / -1;
+  }
+
+  .app-shell:not([data-view="library"]) .playlists-block {
+    display: none;
+  }
+
+  .playlists-head {
+    flex-shrink: 0;
+    gap: 2px;
+    padding: 0;
+  }
+
+  .playlist-nav {
+    display: flex;
+    flex: 1;
+    gap: 8px;
+    min-width: 0;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .playlist-item {
+    background: rgba(255, 255, 255, 0.045);
+    flex: 0 0 auto;
+    max-width: 180px;
+    min-height: 36px;
+    padding: 7px 12px;
+  }
+
+  .playlist-item .playlist-count {
+    display: none;
+  }
+
+  .playlist-item .playlist-name {
+    font-size: 12px;
+  }
+
+  /* The inline draft joins the chip strip as a fixed-width chip. */
+  .playlist-nav .playlist-draft {
+    flex: 0 0 auto;
+    margin: 0;
+    width: 170px;
+  }
+
+  .playlist-nav .playlist-draft input {
+    height: 36px;
+  }
+
+  .main-shell {
+    overflow: visible;
+    padding: 12px var(--content-pad) 0;
+  }
+
+  .top-header {
+    height: auto;
+    padding: 0;
+  }
+
+  .search-field {
+    width: 100%;
+  }
+
+  .fan-badge {
+    display: none;
+  }
+
+  /* On the stacked mobile layout the (already search-less) About header only
+   * pushes content below the fold. */
+  .app-shell[data-view="about"] .top-header {
+    display: none;
+  }
+
+  /* The app shell already pads the page bottom by the player height — the
+   * old per-view player-height padding double-counted it and made every
+   * view scroll. Extra clearance only exists while the docked video strip
+   * floats above the player. */
+  .view {
+    overflow: visible;
+    padding-bottom: 20px;
+  }
+
+  .app-shell:has(.now-panel.has-video:not([hidden])) .view {
+    padding-bottom: 110px;
+  }
+
+  .radio-grid {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .hero-card {
+    gap: 16px;
+    grid-template-columns: minmax(120px, 160px) minmax(0, 1fr);
+    min-height: 0;
+    padding: 18px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .library-controls {
+    gap: 10px;
+  }
+
+  .library-row {
+    grid-template-columns: minmax(0, 1fr) 48px 80px;
+    min-height: 72px;
+    padding: 10px;
+  }
+
+  .library-song-cell {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .library-song-cell .row-number,
+  .library-song-cell .playing-bars,
+  .library-row.active .playing-bars {
+    display: none;
+  }
+
+  /* The source column collapses, but its content moves into the row's third
+   * line so duplicate songs stay tellable apart. */
+  .library-source {
+    display: none;
+  }
+
+  .library-sub {
+    display: block;
+  }
+
+  .about-hero {
+    gap: 6px 0;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 22px 18px;
+    text-align: left;
+  }
+
+  .chibi-stage {
+    max-width: 210px;
+    width: 100%;
+  }
+
+  .about-hero-copy {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .about-hero-copy h2 {
+    font-size: 25px;
+  }
+
+  .about-stats {
+    justify-content: center;
+  }
+
+  .about-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-player {
+    align-items: center;
+    gap: 8px 14px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 14px 16px 12px;
+  }
+
+  /* The progress bar becomes a slim strip across the top edge of the player. */
+  .progress-row {
+    display: block;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: -2px;
+    width: auto;
+  }
+
+  /* Compact elapsed/total floats just above the strip's corners so mobile
+   * still shows playback time. */
+  .progress-row .duration-label {
+    background: rgba(17, 19, 31, 0.85);
+    border-radius: 999px;
+    font-size: 10px;
+    padding: 1px 7px;
+    position: absolute;
+    top: -20px;
+  }
+
+  #playerElapsed {
+    left: 8px;
+  }
+
+  #playerDuration {
+    right: 8px;
+  }
+
+  .progress-track {
+    border-radius: 0;
+    height: 4px;
+  }
+
+  /* The visible strip is 4px; this invisible pad brings the touch target to
+   * ~30px without changing the layout. */
+  .progress-track::before {
+    bottom: -10px;
+    content: "";
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: -16px;
+  }
+
+  .progress-fill {
+    border-radius: 0;
+    height: 4px;
+  }
+
+  .knot-wrap {
+    display: none;
+  }
+
+  .now-block {
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) 34px;
+  }
+
+  .now-open {
+    gap: 12px;
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .cover-player {
+    height: 44px;
+    width: 44px;
+  }
+
+  .current-like {
+    height: 34px;
+    width: 34px;
+  }
+
+  .now-title {
+    font-size: 13px;
+    line-height: 16px;
+  }
+
+  .now-artist {
+    display: none;
+  }
+
+  .now-source {
+    font-size: 12px;
+    line-height: 15px;
+  }
+
+  .transport-block {
+    display: block;
+  }
+
+  /* Shuffle and repeat stay: shuffle is the core radio mechanic. */
+  .controls-row {
+    gap: 12px;
+  }
+
+  /* Volume is device-controlled and the ⋮ menu is reachable from the panel
+   * sheet and every row — the whole actions cluster goes. */
+  .player-actions {
+    display: none;
+  }
+
+  .toast {
+    bottom: calc(var(--player-height) + 14px);
+    max-width: calc(100vw - 32px);
+  }
+
+  /* The docked video strip floats exactly where the toast lands — hop over
+   * it (strip is ~82px tall plus its 10px gap). */
+  body:has(.now-panel.has-video:not([hidden])) .toast {
+    bottom: calc(var(--player-height) + 106px);
+  }
+
+  .volume-field {
+    display: none;
+  }
+
+  /* Small screens: the panel docks as a full-width strip just above the
+   * player — video thumb left, title beside it, chevron to grow it into the
+   * sheet with the track info, actions, and queue. It only exists once a
+   * video is actually playing, so audio can never play from a hidden video. */
+  .now-panel {
+    align-items: center;
+    /* Fully opaque: as a floating layer, page text ghosting through the
+     * desktop panel's 0.96 alpha reads as a rendering glitch. */
+    background: #0f111f;
+    border-radius: var(--radius-md);
+    bottom: calc(var(--player-height) + 10px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
+    display: none;
+    flex-direction: row;
+    gap: 10px;
+    left: 12px;
+    max-height: none;
+    overflow: visible;
+    padding: 8px;
+    position: fixed;
+    right: 12px;
+    top: auto;
+    width: auto;
+    z-index: 25;
+  }
+
+  .now-panel.has-video:not([hidden]) {
+    display: flex;
+  }
+
+  .now-panel .panel-frame {
+    width: 118px;
+  }
+
+  .now-panel .panel-head-actions {
+    display: inline-flex;
+    margin-left: auto;
+  }
+
+  /* The docked strip shows the title only; everything else waits for the
+   * sheet. */
+  .now-panel:not(.is-sheet) .panel-kicker,
+  .now-panel:not(.is-sheet) .panel-artist,
+  .now-panel:not(.is-sheet) .panel-source,
+  .now-panel:not(.is-sheet) .panel-note,
+  .now-panel:not(.is-sheet) .panel-upnext {
+    display: none;
+  }
+
+  .now-panel:not(.is-sheet) .panel-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .now-panel:not(.is-sheet) .panel-title {
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    font-size: 14px;
+    line-height: 1.3;
+    overflow: hidden;
+  }
+
+  /* The chevron rides the right edge of the strip and points up. */
+  .now-panel:not(.is-sheet) .panel-head {
+    order: 3;
+  }
+
+  .now-panel #panelToggleBtn svg {
+    transform: rotate(180deg);
+  }
+
+  .now-panel.is-sheet {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+    max-height: calc(100dvh - var(--player-height) - 24px - env(safe-area-inset-bottom, 0px));
+    overflow: auto;
+    padding: 12px;
+  }
+
+  .now-panel.is-sheet .panel-frame {
+    width: 100%;
+  }
+
+  .now-panel.is-sheet #panelToggleBtn svg {
+    transform: rotate(0deg);
+  }
+}
+
+@media (max-width: 460px) {
+  .main-shell,
+  .sidebar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .hero-card {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  /* Stacked layout: the art centers above the metadata. */
+  .hero-art-box {
+    justify-self: center;
+    max-width: 190px;
+    width: 100%;
+  }
+
+  .filter-row {
+    flex-wrap: nowrap;
+    overflow: auto;
+    padding-bottom: 2px;
+  }
+
+  .filter-chip {
+    flex: 0 0 auto;
+  }
+
+  /* Narrow phones: give the song title the width back. */
+  .library-row {
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr) 42px 76px;
+  }
+
+  /* Slim the transport so the now-playing title isn't crushed beside it. */
+  .controls-row {
+    gap: 8px;
+  }
+
+  .icon-button {
+    height: 28px;
+    width: 28px;
+  }
+
+  .icon-button svg {
+    height: 18px;
+    width: 18px;
+  }
+
+  .play-button {
+    height: 48px;
+    width: 48px;
+  }
+
+  .current-like {
+    display: none;
+  }
+
+  .now-block {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .now-open {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .cover-player {
+    height: 40px;
+    width: 40px;
+  }
+}

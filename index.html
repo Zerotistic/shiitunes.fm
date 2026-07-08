@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>ShiiTunes</title>
+  <meta name="description" content="ShiiTunes is an unofficial fan-made radio for discovering Shiina Amanogawa singing songs, linking back to the original YouTube VODs.">
+  <meta name="theme-color" content="#11131f">
+  <meta property="og:title" content="ShiiTunes">
+  <meta property="og:description" content="A celestial fan radio for Shiina Amanogawa singing songs on YouTube.">
+  <meta property="og:type" content="website">
+  <!-- DEPLOY STEP (required): scrapers ignore relative og:image paths. Before
+       publishing, replace both URLs below with the deployed origin, e.g.:
+         sed -i 's|https://DEPLOY-ORIGIN|https://your.domain|g' index.html -->
+  <meta property="og:url" content="https://DEPLOY-ORIGIN/">
+  <meta property="og:image" content="https://DEPLOY-ORIGIN/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ShiiTunes">
+  <meta name="twitter:description" content="A celestial fan radio for Shiina Amanogawa singing songs on YouTube.">
+  <meta name="twitter:image" content="./og-image.png">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffc53d' d='M12 2.5l2.5 6.2 6.7.5-5.1 4.3 1.6 6.5-5.7-3.5-5.7 3.5 1.6-6.5-5.1-4.3 6.7-.5L12 2.5z'/%3E%3C/svg%3E">
+  <!-- Warm the TLS handshakes the player and thumbnails will need anyway. -->
+  <link rel="preconnect" href="https://www.youtube.com">
+  <link rel="preconnect" href="https://i.ytimg.com">
+  <!-- Self-hosted fonts render most of the UI; preloading kills the FOUT. -->
+  <link rel="preload" href="./fonts/quicksand-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./fonts/baloo2-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Cache rule: bump every ?v= stamp in this file (all css/ links, app.js)
+       together on every web deploy; bump DATA_VERSION in js/data.js when
+       data/tracks.json changes. Link order is load-bearing: later sheets
+       override equal-specificity rules in earlier ones. -->
+  <link rel="stylesheet" href="./css/base.css?v=39">
+  <link rel="stylesheet" href="./css/views.css?v=39">
+  <link rel="stylesheet" href="./css/about.css?v=39">
+  <link rel="stylesheet" href="./css/player.css?v=39">
+  <link rel="stylesheet" href="./css/overlays.css?v=39">
+  <link rel="stylesheet" href="./css/responsive.css?v=39">
+  <link rel="stylesheet" href="./css/bee.css?v=39">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <svg class="icon-sprite" aria-hidden="true">
+    <symbol id="icon-star" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 2.5l2.5 6.2 6.7.5-5.1 4.3 1.6 6.5-5.7-3.5-5.7 3.5 1.6-6.5-5.1-4.3 6.7-.5L12 2.5z"/>
+    </symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="m16.5 16.5 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-radio" viewBox="0 0 24 24">
+      <path d="M4 10h16v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <path d="m8 10 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="9" cy="15" r="2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M14 14h3M14 17h2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-library" viewBox="0 0 24 24">
+      <path d="M5 5h14v14H5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M8 9h8M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 10v7M12 7h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-shuffle" viewBox="0 0 24 24">
+      <path d="M4 7h3c2.8 0 4.2 2 5.5 5S15.2 17 18 17h2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="m17 14 3 3-3 3M4 17h3c1.2 0 2.1-.4 2.9-1.2M14.1 8.2C15 7.4 16.2 7 18 7h2M17 4l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-prev" viewBox="0 0 24 24">
+      <path d="M6 5v14M19 6l-10 6 10 6V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-next" viewBox="0 0 24 24">
+      <path d="M18 5v14M5 6l10 6-10 6V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24">
+      <path d="m8 5 11 7-11 7V5z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-pause" viewBox="0 0 24 24">
+      <path d="M8 5h3v14H8zM13 5h3v14h-3z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-repeat" viewBox="0 0 24 24">
+      <path d="M17 3l4 4-4 4M3 11V9a2 2 0 0 1 2-2h16M7 21l-4-4 4-4M21 13v2a2 2 0 0 1-2 2H3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-external" viewBox="0 0 24 24">
+      <path d="M14 5h5v5M13 11l6-6M19 14v5H5V5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24">
+      <path d="M9 9h10v10H9zM5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-link" viewBox="0 0 24 24">
+      <path d="M10 14a4 4 0 0 0 6 .5l3-3a4 4 0 1 0-5.7-5.7l-1.2 1.2M14 10a4 4 0 0 0-6-.5l-3 3a4 4 0 1 0 5.7 5.7l1.2-1.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24">
+      <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-chevron" viewBox="0 0 24 24">
+      <path d="m6 9.5 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-heart" viewBox="0 0 24 24">
+      <path d="M12 20.1l-1.1-1C5.7 14.4 3.2 12 3.2 9c0-2.5 1.9-4.4 4.4-4.4 1.6 0 3.1.8 4.4 2.2 1.3-1.4 2.8-2.2 4.4-2.2 2.5 0 4.4 1.9 4.4 4.4 0 3-2.5 5.4-7.7 10.1l-1.1 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-heart-fill" viewBox="0 0 24 24">
+      <path d="M12 20.1l-1.1-1C5.7 14.4 3.2 12 3.2 9c0-2.5 1.9-4.4 4.4-4.4 1.6 0 3.1.8 4.4 2.2 1.3-1.4 2.8-2.2 4.4-2.2 2.5 0 4.4 1.9 4.4 4.4 0 3-2.5 5.4-7.7 10.1l-1.1 1z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24">
+      <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24">
+      <path d="m5 12.5 4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-queue" viewBox="0 0 24 24">
+      <path d="M4 6h16M4 11h16M4 16h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M17 14v6M14 17h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-dots" viewBox="0 0 24 24">
+      <circle cx="12" cy="5" r="1.8" fill="currentColor"/>
+      <circle cx="12" cy="12" r="1.8" fill="currentColor"/>
+      <circle cx="12" cy="19" r="1.8" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-panel" viewBox="0 0 24 24">
+      <rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="m10.5 9.5 4 2.5-4 2.5v-5z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-volume" viewBox="0 0 24 24">
+      <path d="M4 9h3l5-4v14l-5-4H4z" fill="currentColor"/>
+      <path d="M15 9.5a4 4 0 0 1 0 5M17.5 7a7.5 7.5 0 0 1 0 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-volume-mute" viewBox="0 0 24 24">
+      <path d="M4 9h3l5-4v14l-5-4H4z" fill="currentColor"/>
+      <path d="m15.5 9.5 5 5M20.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-pencil" viewBox="0 0 24 24">
+      <path d="M4 20l1.2-4.4L16.6 4.2a2.05 2.05 0 0 1 2.9 2.9L8.4 18.5 4 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-moon" viewBox="0 0 24 24">
+      <path d="M20 14.5A8 8 0 1 1 9.7 4.1 6.6 6.6 0 0 0 20 14.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <button class="brand" type="button" data-view-target="radio" aria-label="Open ShiiTunes radio">
+        <span class="brand-star"><svg><use href="#icon-star"></use></svg></span>
+        <span>ShiiTunes</span>
+      </button>
+      <nav class="nav" aria-label="Primary">
+        <button class="nav-item active" type="button" data-view-target="radio">
+          <svg><use href="#icon-radio"></use></svg>
+          <span>Radio</span>
+        </button>
+        <button class="nav-item" type="button" data-view-target="library">
+          <svg><use href="#icon-library"></use></svg>
+          <span>Library</span>
+        </button>
+        <button class="nav-item" type="button" data-view-target="about">
+          <svg><use href="#icon-info"></use></svg>
+          <span>About</span>
+        </button>
+      </nav>
+      <div class="playlists-block">
+        <div class="playlists-head">
+          <span id="playlistsLabel">Playlists</span>
+          <button id="newPlaylistBtn" type="button" aria-label="New playlist">
+            <svg><use href="#icon-plus"></use></svg>
+          </button>
+        </div>
+        <nav id="playlistNav" class="playlist-nav" aria-labelledby="playlistsLabel"></nav>
+      </div>
+    </aside>
+
+    <main class="main-shell" id="main">
+      <h1 class="sr-only">ShiiTunes</h1>
+      <header class="top-header">
+        <div class="search-field">
+          <svg aria-hidden="true"><use href="#icon-search"></use></svg>
+          <label class="sr-only" for="globalSearch">Search songs, artists, or streams</label>
+          <input id="globalSearch" type="search" autocomplete="off" placeholder="Search songs, artists, or streams">
+          <button id="searchClearBtn" class="search-clear" type="button" aria-label="Clear search" hidden>
+            <svg><use href="#icon-close"></use></svg>
+          </button>
+        </div>
+        <span class="fan-badge">
+          <svg aria-hidden="true"><use href="#icon-star"></use></svg>
+          Unofficial fan project
+        </span>
+      </header>
+
+      <div id="dataBanner" class="data-banner" role="alert" hidden>
+        <span id="dataBannerText"></span>
+        <button id="dataRetryBtn" class="banner-retry" type="button">Retry</button>
+      </div>
+
+      <section class="view radio-view active" data-view="radio" aria-labelledby="radioTitle">
+        <h2 id="radioTitle" class="sr-only">Radio</h2>
+        <div class="radio-grid">
+          <section id="heroCard" class="hero-card" aria-label="Now playing">
+            <div id="heroArtBox" class="hero-art-box"></div>
+            <div class="hero-meta">
+              <span id="onAirChip" class="onair-chip">
+                <span class="chip-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+                <span id="onAirText">On air</span>
+              </span>
+              <h3 id="heroTitle" class="hero-title">Tuning the telescope…</h3>
+              <p id="heroSubtitle" class="hero-subtitle"></p>
+              <p id="heroSource" class="hero-source"></p>
+              <p id="heroBlockedNote" class="hero-blocked-note" hidden>This moment only plays on YouTube — <button id="heroBlockedOpenBtn" class="note-link" type="button">open it there</button>.</p>
+              <div class="hero-actions">
+                <button id="heroPlayBtn" class="primary-action" type="button">
+                  <svg class="play-icon"><use href="#icon-play"></use></svg>
+                  <svg class="pause-icon"><use href="#icon-pause"></use></svg>
+                  <span id="heroPlayLabel">Play</span>
+                </button>
+                <button id="heroLikeBtn" class="secondary-button heart-button hero-icon-button" type="button" aria-label="Save to Liked Songs" aria-pressed="false">
+                  <svg><use href="#icon-heart"></use></svg>
+                </button>
+                <button id="heroAddBtn" class="secondary-button hero-icon-button" type="button" aria-label="Add to playlist">
+                  <svg><use href="#icon-plus"></use></svg>
+                </button>
+                <button id="heroShareBtn" class="secondary-button hero-icon-button" type="button" aria-label="Copy ShiiTunes link" title="Copy ShiiTunes link">
+                  <svg><use href="#icon-link"></use></svg>
+                </button>
+                <button id="heroOpenBtn" class="secondary-button hero-icon-button" type="button" aria-label="Open on YouTube" title="Open on YouTube">
+                  <svg><use href="#icon-external"></use></svg>
+                </button>
+              </div>
+              <div class="station-row" role="group" aria-label="Quick stations">
+                <span class="station-label">Stations</span>
+                <button class="station-chip" type="button" data-station="all">Everything</button>
+                <button class="station-chip" type="button" data-station="karaoke">Karaoke</button>
+                <button class="station-chip" type="button" data-station="cover">Covers</button>
+                <button class="station-chip" type="button" data-station="original">Originals</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view library-view" data-view="library" aria-labelledby="libraryTitle">
+        <div class="library-head">
+          <div class="section-heading">
+            <h2 id="libraryTitle">Library</h2>
+            <span id="libraryCount" aria-live="polite">Loading…</span>
+            <button id="deletePlaylistBtn" class="danger-button" type="button" hidden>Delete playlist</button>
+          </div>
+          <div id="libraryControls" class="library-controls">
+            <div id="filterRow" class="filter-row" role="group" aria-label="Library filters">
+              <button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">All songs</button>
+              <button class="filter-chip" type="button" data-filter="karaoke" aria-pressed="false">Karaoke</button>
+              <button class="filter-chip" type="button" data-filter="cover" aria-pressed="false">Covers</button>
+              <button class="filter-chip" type="button" data-filter="original" aria-pressed="false">Originals</button>
+            </div>
+            <div class="sort-group" role="group" aria-label="Sort library">
+              <button id="azSortBtn" class="sort-chip" type="button" aria-pressed="false" title="Sort alphabetically">A–Z</button>
+              <button id="newestSortBtn" class="sort-chip" type="button" aria-pressed="false" title="Sort by stream date" hidden>Newest</button>
+            </div>
+          </div>
+        </div>
+        <div class="library-table">
+          <div id="libraryRows" class="library-rows"></div>
+        </div>
+      </section>
+
+      <section class="view about-view" data-view="about" aria-labelledby="aboutTitle">
+        <div class="about-hero">
+          <!-- Chibi Shiina in concert: she sings (mic in hand) on a moon-
+               surface stage under spotlight beams, while her audience of
+               anthropomorph Butter Cookies (and one crab fan) watches from
+               the foreground — the camera sits just above their heads.
+               Design cues from her actual model: floor-length blonde hair
+               with a constellation-filled night-sky lining, deep blue eyes,
+               white head ribbon, scissors hair pin, white outfit with black
+               ribbons and a purple neck bow. Idle loops: she bobs and sways,
+               her mouth sings, the galaxy lining and sky twinkle, notes
+               drift, the stage glows, the cookies bounce, the crab rocks. -->
+          <div class="chibi-stage" aria-hidden="true">
+            <span class="chibi-notes"><span>♪</span><span>♫</span><span>♪</span></span>
+            <span class="about-sparkle sparkle-1"><svg><use href="#icon-star"></use></svg></span>
+            <span class="about-sparkle sparkle-2"><svg><use href="#icon-star"></use></svg></span>
+            <span class="about-sparkle sparkle-3"><svg><use href="#icon-star"></use></svg></span>
+            <span class="about-sparkle sparkle-4"><svg><use href="#icon-star"></use></svg></span>
+            <span class="about-sparkle sparkle-5"><svg><use href="#icon-star"></use></svg></span>
+            <span class="about-sparkle sparkle-6"><svg><use href="#icon-star"></use></svg></span>
+            <span class="about-sparkle sparkle-7"><svg><use href="#icon-star"></use></svg></span>
+          </div>
+          <div class="about-hero-copy">
+            <p class="about-kicker">Unofficial fan project</p>
+            <h2 id="aboutTitle">Every time Shiina sings, it's here.</h2>
+            <p class="about-tagline">ShiiTunes is a fan-made project and is not affiliated with, endorsed by, or connected to Shiina Amanogawa or Phase Connect. Something wrong, or a takedown request? Contact <a href="https://twitter.com/gegrgtezrze" target="_blank" rel="noopener noreferrer">@gegrgtezrze</a> on Twitter and it will be handled promptly.</p>
+            <div class="about-stats">
+              <div class="about-stat">
+                <span id="aboutMoments" class="stat-number">–</span>
+                <span class="stat-label">unique songs</span>
+              </div>
+              <div class="about-stat">
+                <span id="aboutStreams" class="stat-number">–</span>
+                <span class="stat-label">streams charted</span>
+              </div>
+              <div class="about-stat">
+                <span id="aboutLiked" class="stat-number">–</span>
+                <span class="stat-label">songs you've liked</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-cards">
+          <div class="about-card">
+            <span class="about-card-icon"><svg aria-hidden="true"><use href="#icon-external"></use></svg></span>
+            <strong>Nothing hosted here</strong>
+            <span>Every play is a YouTube embed into the original VOD. Watch time and views land on the official channel, where they belong.</span>
+          </div>
+          <div class="about-card">
+            <span class="about-card-icon"><svg aria-hidden="true"><use href="#icon-star"></use></svg></span>
+            <strong>Charted by fans</strong>
+            <span>Each moment is found, timed, and titled by fans from public streams. Spot a wrong title or a missing song? Say so and the map gets fixed.</span>
+          </div>
+          <div class="about-card">
+            <span class="about-card-icon"><svg aria-hidden="true"><use href="#icon-heart-fill"></use></svg></span>
+            <strong>Yours stays with you</strong>
+            <span>Likes and playlists live in your own browser: no accounts, no tracking. The only cookies here are Butter Cookies. (Hi. That's you.)</span>
+          </div>
+          <div class="about-card">
+            <span class="about-card-icon"><svg aria-hidden="true"><use href="#icon-radio"></use></svg></span>
+            <strong>Hands-free radio</strong>
+            <span>Press <kbd>Space</kbd> to play or pause, and <kbd>←</kbd> <kbd>→</kbd> to hop between songs from anywhere in the app.</span>
+          </div>
+        </div>
+
+        <div class="about-links">
+          <a class="primary-action" href="https://www.youtube.com/channel/UCnJNNk45O1QYS2oMRYFKSyw" target="_blank" rel="noopener noreferrer">
+            <svg aria-hidden="true"><use href="#icon-external"></use></svg>
+            Shiina Amanogawa on YouTube
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- The video's permanent home: reparenting an iframe reloads it, so this
+         panel never moves in the DOM — CSS repositions it on small screens. -->
+    <aside id="nowPanel" class="now-panel" aria-label="Now playing" hidden>
+      <div class="panel-head">
+        <span class="panel-kicker" aria-hidden="true">Now playing</span>
+        <!-- Mobile-only chrome: grows the floating mini-video into the info
+             sheet. On desktop the panel is toggled from the player bar. -->
+        <span class="panel-head-actions">
+          <button id="panelToggleBtn" class="panel-chrome-btn" type="button" aria-label="Expand video panel" aria-expanded="false">
+            <svg aria-hidden="true"><use href="#icon-chevron"></use></svg>
+          </button>
+        </span>
+      </div>
+      <div class="panel-frame">
+        <div id="youtubePlayer"></div>
+        <div id="panelOverlay" class="panel-overlay">
+          <svg aria-hidden="true"><use href="#icon-star"></use></svg>
+          <span>Press play to tune in</span>
+        </div>
+      </div>
+      <div class="panel-info" aria-live="polite">
+        <div id="panelTitle" class="panel-title"></div>
+        <div id="panelArtist" class="panel-artist"></div>
+        <div id="panelSource" class="panel-source"></div>
+        <p id="panelBlockedNote" class="panel-note" hidden>This moment only plays on YouTube.
+          <button id="panelBlockedOpenBtn" class="note-link" type="button">Open it there</button>
+        </p>
+      </div>
+      <section class="panel-upnext" aria-labelledby="upNextTitle">
+        <div class="upnext-heading">
+          <h3 id="upNextTitle">Up next</h3>
+          <span id="upNextCount" class="count-chip" aria-live="polite"></span>
+        </div>
+        <div class="upnext-list" id="upNextList"></div>
+      </section>
+    </aside>
+
+    <footer class="bottom-player" aria-label="Player">
+      <div class="now-block">
+        <button id="playerNowBtn" class="now-open" type="button" aria-label="Open the radio view">
+          <span id="playerArtBox" class="player-art-box"></span>
+          <span class="now-copy">
+            <span id="playerTitle" class="now-title">Loading ShiiTunes</span>
+            <span id="playerArtist" class="now-artist">Shiina Amanogawa</span>
+            <span id="playerSource" class="now-source"></span>
+          </span>
+        </button>
+        <button id="currentLikeBtn" class="current-like heart-button" type="button" aria-label="Save current song to Liked Songs" aria-pressed="false">
+          <svg><use href="#icon-heart"></use></svg>
+        </button>
+      </div>
+
+      <div class="transport-block">
+        <div class="controls-row">
+          <button id="shuffleBtn" class="icon-button" type="button" aria-label="Shuffle" aria-pressed="false">
+            <svg><use href="#icon-shuffle"></use></svg>
+          </button>
+          <button id="prevBtn" class="icon-button" type="button" aria-label="Previous song">
+            <svg><use href="#icon-prev"></use></svg>
+          </button>
+          <button id="playBtn" class="play-button" type="button" aria-label="Play or pause">
+            <!-- Sad Bee, in profile facing right. Awake (playing/loading): hovers
+                 and sways, wings flap, legs dangle and kick, antennae perk up,
+                 the eye blinks, and a tear wells and drips. Asleep (paused/idle):
+                 lands on a pillow, a nightcap fades on, wings fold (with the
+                 occasional dream-twitch), antennae droop, the body breathes, and
+                 z's drift up. All state changes transition via .app-shell classes. -->
+            <svg class="bee-svg" viewBox="0 0 64 64" aria-hidden="true">
+              <defs>
+                <clipPath id="beeBodyClip">
+                  <ellipse cx="30" cy="37" rx="15" ry="10.5"/>
+                </clipPath>
+              </defs>
+              <g class="bee-pillow">
+                <rect x="12" y="45" width="40" height="11" rx="5.5" fill="#b9c4f2"/>
+                <rect x="12" y="50.5" width="40" height="5.5" rx="2.75" fill="rgba(38, 42, 101, 0.3)"/>
+                <circle cx="14" cy="46.5" r="1.1" fill="#dde3fb"/>
+                <circle cx="50" cy="46.5" r="1.1" fill="#dde3fb"/>
+                <circle cx="14" cy="54.5" r="1.1" fill="#8e9ade"/>
+                <circle cx="50" cy="54.5" r="1.1" fill="#8e9ade"/>
+              </g>
+              <!-- Pose transforms (transitioned) and idle loops (animated) live
+                   on separate nested groups: an animation declared on the same
+                   property suppresses the transition entirely. -->
+              <g class="bee-figure">
+                <g class="bee-rig">
+                  <g class="bee-wing bee-wing-back">
+                    <g class="bee-wing-rig">
+                      <ellipse cx="24.5" cy="19" rx="4.6" ry="8.8" fill="rgba(169, 183, 234, 0.42)"/>
+                    </g>
+                  </g>
+                  <g class="bee-wing bee-wing-front">
+                    <g class="bee-wing-rig">
+                      <ellipse cx="30.5" cy="17.5" rx="5.2" ry="9.8" fill="rgba(190, 205, 245, 0.62)" stroke="rgba(224, 223, 254, 0.5)" stroke-width="0.8"/>
+                    </g>
+                  </g>
+                  <path d="M16 36.5 10.5 38.2 15.3 40.8 Z" fill="#e0a92e"/>
+                  <path class="bee-leg bee-leg-back" d="M27 47q-.5 3.5-3 4.5" fill="none" stroke="#e0a92e" stroke-width="1.6" stroke-linecap="round"/>
+                  <path class="bee-leg bee-leg-front" d="M34 47q-.5 3.5-3 4.5" fill="none" stroke="#e0a92e" stroke-width="1.6" stroke-linecap="round"/>
+                  <ellipse cx="30" cy="37" rx="15" ry="10.5" fill="var(--amber, #ffc53d)"/>
+                  <g clip-path="url(#beeBodyClip)" fill="#241c10">
+                    <rect x="19.5" y="24" width="5" height="26" transform="rotate(6 22 37)"/>
+                    <rect x="27.5" y="24" width="5" height="26" transform="rotate(6 30 37)"/>
+                  </g>
+                  <g class="bee-antenna bee-antenna-front">
+                    <g class="bee-antenna-rig">
+                      <path d="M47 24.5q1-4.5 4.5-6" fill="none" stroke="#e0a92e" stroke-width="1.5" stroke-linecap="round"/>
+                      <circle cx="51.9" cy="18.1" r="1.2" fill="#e0a92e"/>
+                    </g>
+                  </g>
+                  <g class="bee-antenna bee-antenna-back">
+                    <g class="bee-antenna-rig">
+                      <path d="M43.5 24.3q-.5-5 2-7.2" fill="none" stroke="#e0a92e" stroke-width="1.5" stroke-linecap="round"/>
+                      <circle cx="45.8" cy="16.7" r="1.2" fill="#e0a92e"/>
+                    </g>
+                  </g>
+                  <circle cx="45.5" cy="32.5" r="8.8" fill="var(--amber, #ffc53d)"/>
+                  <g class="bee-cap">
+                    <path d="M38.9 26.8 Q45.5 21.8 52 25.3 Q51.5 19.6 46.5 17.2 Q40 14.2 35.2 18.4 Q38.5 21.5 38.9 26.8 Z" fill="#262a65"/>
+                    <path d="M38.6 27.3 Q45.6 22.4 52.4 25.7" fill="none" stroke="#8e9ade" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="35" cy="18.2" r="1.8" fill="#dde3fb"/>
+                  </g>
+                  <path class="bee-brow" d="M45.2 28.2q2.6-1.6 4.9-.7" fill="none" stroke="#241c10" stroke-width="1.3" stroke-linecap="round"/>
+                  <g class="bee-eye-awake">
+                    <circle cx="48.3" cy="31.8" r="1.9" fill="#241c10"/>
+                    <circle cx="48.9" cy="31.1" r="0.55" fill="#fff" opacity="0.85"/>
+                  </g>
+                  <path class="bee-eye-sleep" d="M46.3 31.9q2.1 2.2 4.2 0" fill="none" stroke="#241c10" stroke-width="1.5" stroke-linecap="round"/>
+                  <path class="bee-mouth" d="M46.8 38.4q2.3-2.1 4.5-.6" fill="none" stroke="#241c10" stroke-width="1.4" stroke-linecap="round"/>
+                  <path class="bee-tear" d="M50.7 33.1c1.4 2.3 1.7 3.5.8 4.4-.8.8-2.1.6-2.5-.4-.5-1 .3-2.5 1.7-4z" fill="#9fd0f7"/>
+                </g>
+              </g>
+            </svg>
+            <span class="bee-zzz" aria-hidden="true"><span>z</span><span>z</span><span>z</span></span>
+            <span class="bee-notes" aria-hidden="true"><span>♪</span><span>♫</span><span>♪</span></span>
+            <span class="play-badge">
+              <svg class="play-icon"><use href="#icon-play"></use></svg>
+              <svg class="pause-icon"><use href="#icon-pause"></use></svg>
+            </span>
+          </button>
+          <button id="nextBtn" class="icon-button" type="button" aria-label="Next song">
+            <svg><use href="#icon-next"></use></svg>
+          </button>
+          <button id="repeatBtn" class="icon-button" type="button" aria-label="Repeat off">
+            <svg><use href="#icon-repeat"></use></svg>
+          </button>
+        </div>
+        <div class="progress-row">
+          <span id="playerElapsed" class="duration-label">0:00</span>
+          <div id="progressTrack" class="progress-track" role="slider" tabindex="0"
+               aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="progressFill" class="progress-fill"></span>
+            <span class="knot-wrap">
+              <span class="thread-knot"></span>
+              <span class="knot-spark"></span>
+              <span class="knot-spark"></span>
+            </span>
+          </div>
+          <span id="playerDuration" class="duration-label">--:--</span>
+        </div>
+      </div>
+
+      <div class="player-actions">
+        <button id="panelHideBtn" class="icon-action panel-toggle" type="button" aria-label="Hide now playing panel" aria-pressed="true" title="Now playing panel">
+          <svg><use href="#icon-panel"></use></svg>
+        </button>
+        <button id="sleepBtn" class="icon-action" type="button" aria-label="Sleep timer" aria-pressed="false" aria-haspopup="menu" title="Sleep timer">
+          <svg><use href="#icon-moon"></use></svg>
+        </button>
+        <div class="volume-field">
+          <button id="muteBtn" class="icon-action" type="button" aria-label="Mute" aria-pressed="false">
+            <svg><use href="#icon-volume"></use></svg>
+          </button>
+          <label class="sr-only" for="volumeSlider">Volume</label>
+          <input id="volumeSlider" type="range" min="0" max="100" step="1" value="100">
+        </div>
+        <button id="playerMenuBtn" class="icon-action" type="button" aria-label="More options for current song" aria-haspopup="menu">
+          <svg><use href="#icon-dots"></use></svg>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Playlist naming happens inline (sidebar draft row / menu row) — only
+       the destructive confirm still warrants a modal. -->
+  <dialog id="confirmDialog" class="app-dialog">
+    <form method="dialog">
+      <h3 class="dialog-title">Delete playlist?</h3>
+      <p class="dialog-body"></p>
+      <div class="dialog-actions">
+        <button class="secondary-button" type="submit" value="cancel" autofocus>Cancel</button>
+        <button class="danger-button dialog-confirm" type="submit" value="confirm">Delete</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./js/app.js?v=39"></script>
+</body>
+</html>

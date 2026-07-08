@@ -1,0 +1,213 @@
+<svg class="chibi-svg" viewBox="-10 -5 280 232">
+  <defs>
+    <linearGradient id="chibiGalaxy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3379"/>
+      <stop offset="0.55" stop-color="#2a2560"/>
+      <stop offset="1" stop-color="#1c1844"/>
+    </linearGradient>
+  </defs>
+  <!-- a huge pale moon looms behind the stage -->
+  <circle cx="130" cy="86" r="76" fill="rgba(255, 197, 61, 0.06)" stroke="rgba(255, 197, 61, 0.14)" stroke-width="1.5"/>
+  <!-- loose stars in the night sky -->
+  <g class="chibi-space">
+    <circle class="space-star star-a" cx="44" cy="52" r="1.8" fill="#ffe08a"/>
+    <circle class="space-star star-b" cx="78" cy="26" r="1.4" fill="#fff"/>
+    <circle class="space-star star-c" cx="198" cy="34" r="1.7" fill="#ffe08a"/>
+    <circle class="space-star star-a" cx="230" cy="64" r="1.2" fill="#fff"/>
+    <circle class="space-star star-b" cx="18" cy="110" r="1.5" fill="#ffe08a"/>
+    <circle class="space-star star-c" cx="244" cy="118" r="1.3" fill="#fff"/>
+    <circle class="space-star star-a" cx="30" cy="152" r="1.4" fill="#fff"/>
+    <circle class="space-star star-b" cx="234" cy="158" r="1.6" fill="#ffe08a"/>
+  </g>
+  <!-- spotlight beams converging on the singer -->
+  <path class="stage-light light-l" d="M20 -5 L58 -5 L142 154 L86 154 Z" fill="rgba(255, 234, 176, 0.055)"/>
+  <path class="stage-light light-r" d="M240 -5 L202 -5 L118 154 L174 154 Z" fill="rgba(255, 234, 176, 0.055)"/>
+  <!-- floor-length blonde hair falling to the stage -->
+  <g class="chibi-bob">
+    <path d="M130 40 Q92 42 84 76 Q80 106 74 128 Q69 145 64 152 Q76 160 88 152 Q98 158 108 152 Q119 158 130 156 Q141 158 152 152 Q162 158 172 152 Q184 160 196 152 Q191 145 186 128 Q180 106 176 76 Q168 42 130 40 Z" fill="#f3c96a"/>
+    <path d="M84 96 Q80 124 70 148 M176 96 Q180 124 190 148" fill="none" stroke="#dfa93f" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- the night-sky lining inside her hair -->
+    <path d="M100 96 Q96 122 88 142 Q86 150 92 154 Q112 160 130 160 Q148 160 168 154 Q174 150 172 142 Q164 122 160 96 Q146 108 130 108 Q114 108 100 96 Z" fill="url(#chibiGalaxy)"/>
+    <g class="chibi-galaxy chibi-galaxy-a" fill="#fff">
+      <circle cx="103" cy="118" r="1.4"/>
+      <circle cx="121" cy="134" r="1.1"/>
+      <circle cx="150" cy="120" r="1.5"/>
+      <circle cx="139" cy="148" r="1.2"/>
+      <circle cx="98" cy="140" r="1.1"/>
+      <circle cx="162" cy="138" r="1.3"/>
+    </g>
+    <g class="chibi-galaxy chibi-galaxy-b" fill="#ffe08a">
+      <circle cx="112" cy="126" r="1.3"/>
+      <circle cx="133" cy="114" r="1.5"/>
+      <circle cx="155" cy="132" r="1.1"/>
+      <circle cx="110" cy="150" r="1.4"/>
+      <circle cx="127" cy="154" r="1.1"/>
+      <circle cx="148" cy="150" r="1.3"/>
+    </g>
+    <path d="M103 118 L112 126 L133 114 M139 148 L148 150" fill="none" stroke="rgba(255, 255, 255, 0.3)" stroke-width="0.8"/>
+  </g>
+  <!-- the moon-surface stage: a thick rock disc with a lit top -->
+  <g class="chibi-moon">
+    <ellipse cx="130" cy="176" rx="96" ry="20" fill="#c98d26"/>
+    <path d="M34 162 L34 176 M226 162 L226 176" stroke="#c98d26" stroke-width="1"/>
+    <rect x="34" y="162" width="192" height="14" fill="#c98d26"/>
+    <ellipse cx="130" cy="162" rx="96" ry="20" fill="var(--amber, #ffc53d)"/>
+    <ellipse cx="130" cy="160" rx="86" ry="15" fill="#ffd35f"/>
+    <!-- craters: shadowed bowl + lit lower lip -->
+    <ellipse cx="98" cy="160" rx="7.5" ry="2.8" fill="rgba(38, 42, 101, 0.3)"/>
+    <path d="M90.5 161 a7.5 2.8 0 0 0 15 0" fill="none" stroke="rgba(255, 244, 214, 0.55)" stroke-width="1"/>
+    <ellipse cx="166" cy="164" rx="5.5" ry="2.1" fill="rgba(38, 42, 101, 0.3)"/>
+    <path d="M160.5 165 a5.5 2.1 0 0 0 11 0" fill="none" stroke="rgba(255, 244, 214, 0.55)" stroke-width="1"/>
+    <ellipse cx="134" cy="153" rx="4" ry="1.5" fill="rgba(38, 42, 101, 0.28)"/>
+    <ellipse cx="70" cy="167" rx="4.5" ry="1.8" fill="rgba(38, 42, 101, 0.26)"/>
+    <path d="M65.5 168 a4.5 1.8 0 0 0 9 0" fill="none" stroke="rgba(255, 244, 214, 0.5)" stroke-width="0.9"/>
+    <ellipse cx="196" cy="158" rx="3.4" ry="1.3" fill="rgba(38, 42, 101, 0.24)"/>
+    <circle cx="152" cy="168" r="1" fill="rgba(38, 42, 101, 0.3)"/>
+    <circle cx="82" cy="156" r="0.9" fill="rgba(38, 42, 101, 0.3)"/>
+    <!-- rough rocky front edge -->
+    <path d="M40 170 Q60 179 84 182 Q106 185 130 185 Q154 185 176 182 Q200 179 220 170" fill="none" stroke="rgba(120, 78, 14, 0.35)" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g class="chibi-bob">
+    <!-- swaying front locks -->
+    <g class="chibi-lock chibi-lock-l">
+      <path d="M96 74 Q86 112 90 138 Q91 150 82 156 Q94 158 99 148 Q104 116 104 84 Z" fill="#f3c96a"/>
+    </g>
+    <g class="chibi-lock chibi-lock-r">
+      <path d="M164 74 Q174 112 170 138 Q169 150 178 156 Q166 158 161 148 Q156 116 156 84 Z" fill="#f3c96a"/>
+    </g>
+    <!-- standing legs in white heeled boots -->
+    <path d="M122 146 L122 156 M138 146 L138 156" fill="none" stroke="#ffe1cc" stroke-width="8" stroke-linecap="round"/>
+    <path d="M122 154 L122 163 M138 154 L138 163" fill="none" stroke="#f7f5ff" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M117.5 154 q4.5 -2 9 0 M133.5 154 q4.5 -2 9 0" fill="none" stroke="#c9cfe8" stroke-width="1.3" stroke-linecap="round"/>
+    <ellipse cx="120.5" cy="166" rx="6.4" ry="4.4" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2"/>
+    <ellipse cx="139.5" cy="166" rx="6.4" ry="4.4" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2"/>
+    <!-- white dress: frilled hem, black straps, waist ribbon -->
+    <path d="M112 108 L148 108 Q156 130 158 148 L102 148 Q104 130 112 108 Z" fill="#f7f5ff"/>
+    <path d="M102 148 Q107 155 113 148 Q119 156 130 149 Q141 156 147 148 Q153 155 158 148 L158 146 L102 146 Z" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M122 117 L138 133 M138 117 L122 133" fill="none" stroke="#3a3a46" stroke-width="1.7" stroke-linecap="round" opacity="0.85"/>
+    <path d="M105 140 L155 140" stroke="#3a3a46" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+    <circle cx="130" cy="140" r="2.6" fill="#9a6ae0"/>
+    <!-- round collar and purple neck bow -->
+    <path d="M120 107 Q130 114 140 107" fill="none" stroke="#c9cfe8" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M130 111 L120 106 L122 116 Z M130 111 L140 106 L138 116 Z" fill="#9a6ae0"/>
+    <path d="M127 114 l-2 6 M133 114 l2 6" fill="none" stroke="#9a6ae0" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="130" cy="111" r="2.6" fill="#7d4fc9"/>
+    <!-- puffy sleeves; left arm waves, right reaches for the stand -->
+    <path d="M110 114 Q96 106 92 92" fill="none" stroke="#ffe1cc" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="91" cy="90" r="4" fill="#ffe1cc"/>
+    <path d="M150 114 Q156 118 148 125" fill="none" stroke="#ffe1cc" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="111" cy="113" r="7" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2"/>
+    <circle cx="149" cy="113" r="7" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2"/>
+    <!-- head -->
+    <circle cx="130" cy="80" r="30" fill="#ffe1cc"/>
+    <!-- blonde bangs with soft highlight -->
+    <path d="M100 80 Q98 46 130 44 Q162 46 160 80 Q154 64 146 76 Q140 60 130 74 Q120 58 112 74 Q106 64 100 80 Z" fill="#f7d67f"/>
+    <path d="M108 52 Q120 44 134 46" fill="none" stroke="#ffe9ad" stroke-width="3" stroke-linecap="round"/>
+    <!-- ahoge -->
+    <path class="chibi-ahoge" d="M128 44 Q124 30 138 27 Q128 35 134 42" fill="#f7d67f"/>
+    <!-- white head ribbon -->
+    <g class="chibi-ribbon">
+      <path d="M100 50 Q86 42 84 54 Q86 64 100 57 Z" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2"/>
+      <path d="M100 50 Q112 38 118 48 Q116 60 102 58 Z" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2"/>
+      <circle cx="100" cy="53" r="3.4" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2"/>
+    </g>
+    <!-- celestial scissors pin -->
+    <g class="chibi-scissors" transform="rotate(-24 160 63)">
+      <path d="M153 56 L167 70 M153 70 L167 56" fill="none" stroke="#c3cae6" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="151.5" cy="54.5" r="2.4" fill="none" stroke="#c3cae6" stroke-width="1.8"/>
+      <circle cx="151.5" cy="71.5" r="2.4" fill="none" stroke="#c3cae6" stroke-width="1.8"/>
+      <circle cx="160" cy="63" r="1.2" fill="#8e9ade"/>
+    </g>
+    <!-- deep blue eyes, blush, singing mouth -->
+    <path d="M108 77 q7 -4 14 -1 M138 76 q7 -3 14 1" fill="none" stroke="#c9a24a" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="116" cy="86" rx="6" ry="7.5" fill="#3050c8"/>
+    <ellipse cx="144" cy="86" rx="6" ry="7.5" fill="#3050c8"/>
+    <path d="M110 84 a6 7.5 0 0 1 12 0 Z" fill="#1c2f7e"/>
+    <path d="M138 84 a6 7.5 0 0 1 12 0 Z" fill="#1c2f7e"/>
+    <circle cx="114" cy="83" r="2.1" fill="#fff"/>
+    <circle cx="142" cy="83" r="2.1" fill="#fff"/>
+    <circle cx="118.5" cy="89" r="1" fill="#fff" opacity="0.85"/>
+    <circle cx="146.5" cy="89" r="1" fill="#fff" opacity="0.85"/>
+    <ellipse cx="107" cy="96" rx="5" ry="3" fill="#ffb3a0" opacity="0.65"/>
+    <ellipse cx="153" cy="96" rx="5" ry="3" fill="#ffb3a0" opacity="0.65"/>
+    <ellipse class="chibi-mouth" cx="130" cy="100" rx="4.5" ry="5.5" fill="#b0452b"/>
+    <!-- mic stand in front of her, head tilted up to her mouth -->
+    <ellipse cx="155" cy="161" rx="8" ry="2.6" fill="#7d829c"/>
+    <path d="M155 160 L139 108" fill="none" stroke="#9aa0b8" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M139 108 L136 103" fill="none" stroke="#6b6b85" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="135" cy="102" r="5.5" fill="#3f3f52"/>
+    <path d="M131.5 100 L138.5 100 M131.5 104 L138.5 104" fill="none" stroke="#6b6b85" stroke-width="0.9"/>
+    <circle cx="133" cy="99.5" r="1.1" fill="#fff" opacity="0.55"/>
+    <!-- her hand wraps the stand -->
+    <circle cx="146" cy="127" r="4.4" fill="#ffe1cc"/>
+  </g>
+  <!-- the audience: anthropomorph Butter Cookies seen from behind -->
+  <g class="cookie-fan fan-1">
+    <path d="M4 202 q-7 -7 -4 -15 M32 202 q7 -7 4 -15" fill="none" stroke="#d99f3e" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="0" cy="186" r="3.4" fill="#e8b455"/>
+    <circle cx="36" cy="186" r="3.4" fill="#e8b455"/>
+    <circle cx="18" cy="216" r="17" fill="#d99f3e"/>
+    <path d="M6 207 q12 -8 24 0" fill="none" stroke="rgba(255, 224, 138, 0.5)" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="12" cy="210" r="2.2" fill="#7d5218"/>
+    <circle cx="24" cy="214" r="1.9" fill="#7d5218"/>
+    <circle cx="16" cy="222" r="1.8" fill="#7d5218"/>
+    <circle cx="26" cy="221" r="0.9" fill="#ffe9ad" opacity="0.8"/>
+    <circle cx="9" cy="217" r="0.8" fill="#ffe9ad" opacity="0.8"/>
+  </g>
+  <g class="cookie-fan fan-2">
+    <path d="M58 206 q-8 -8 -5 -17 M94 206 q8 -8 5 -17" fill="none" stroke="#d99f3e" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="52" cy="188" r="3.8" fill="#e8b455"/>
+    <circle cx="100" cy="188" r="3.8" fill="#e8b455"/>
+    <circle cx="76" cy="224" r="22" fill="#d99f3e"/>
+    <path d="M61 213 q15 -10 30 0" fill="none" stroke="rgba(255, 224, 138, 0.5)" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="68" cy="214" r="2.6" fill="#7d5218"/>
+    <circle cx="84" cy="218" r="2.2" fill="#7d5218"/>
+    <circle cx="74" cy="228" r="2.4" fill="#7d5218"/>
+    <circle cx="86" cy="230" r="2" fill="#7d5218"/>
+    <circle cx="64" cy="222" r="1" fill="#ffe9ad" opacity="0.8"/>
+    <circle cx="90" cy="212" r="0.9" fill="#ffe9ad" opacity="0.8"/>
+  </g>
+  <!-- one fan is a crab (pinchers = her scissors, so they say) -->
+  <g class="cookie-fan fan-3">
+    <g class="chibi-crab">
+      <path d="M114 210 q-9 -10 -3 -18 M146 210 q9 -10 3 -18" fill="none" stroke="#4da568" stroke-width="4.5" stroke-linecap="round"/>
+      <circle cx="109" cy="189" r="6.5" fill="#63c17f"/>
+      <circle cx="151" cy="189" r="6.5" fill="#63c17f"/>
+      <path d="M104 185 l6.5 6.5 M156 185 l-6.5 6.5" fill="none" stroke="#2c5c3c" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M104.5 192 q4.5 3.5 9 0 M146.5 192 q4.5 3.5 9 0" fill="none" stroke="#4da568" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M124 211 q-1.5 -7 -4 -9 M136 211 q1.5 -7 4 -9" fill="none" stroke="#4da568" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="119.5" cy="200.5" r="2.9" fill="#63c17f" stroke="#2c5c3c" stroke-width="0.9"/>
+      <circle cx="140.5" cy="200.5" r="2.9" fill="#63c17f" stroke="#2c5c3c" stroke-width="0.9"/>
+      <path d="M112 227 l-8 3 M114 231 l-7 5 M148 227 l8 3 M146 231 l7 5" fill="none" stroke="#4da568" stroke-width="2" stroke-linecap="round"/>
+      <ellipse cx="130" cy="222" rx="17" ry="12" fill="#63c17f"/>
+      <path d="M118 218 q12 8 24 0" fill="none" stroke="#4da568" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M120 225 q10 6 20 0" fill="none" stroke="#4da568" stroke-width="1.3" stroke-linecap="round"/>
+    </g>
+  </g>
+  <g class="cookie-fan fan-4">
+    <path d="M168 208 q-8 -8 -5 -16 M204 208 q8 -8 5 -16" fill="none" stroke="#d99f3e" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="163" cy="190" r="3.6" fill="#e8b455"/>
+    <!-- this one brought a glow stick -->
+    <path d="M209 190 L216 176" fill="none" stroke="#ffc53d" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="217" cy="174" r="6" fill="rgba(255, 197, 61, 0.22)"/>
+    <circle cx="217" cy="174" r="2.8" fill="#ffe08a"/>
+    <circle cx="208" cy="191" r="3.6" fill="#e8b455"/>
+    <circle cx="186" cy="225" r="20" fill="#d99f3e"/>
+    <path d="M173 215 q13 -9 26 0" fill="none" stroke="rgba(255, 224, 138, 0.5)" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="178" cy="216" r="2.4" fill="#7d5218"/>
+    <circle cx="192" cy="220" r="2" fill="#7d5218"/>
+    <circle cx="184" cy="230" r="2.2" fill="#7d5218"/>
+    <circle cx="195" cy="228" r="1" fill="#ffe9ad" opacity="0.8"/>
+  </g>
+  <g class="cookie-fan fan-5">
+    <path d="M226 202 q-7 -7 -4 -14 M254 202 q7 -7 4 -14" fill="none" stroke="#d99f3e" stroke-width="4.5" stroke-linecap="round"/>
+    <circle cx="222" cy="187" r="3.2" fill="#e8b455"/>
+    <circle cx="258" cy="187" r="3.2" fill="#e8b455"/>
+    <circle cx="240" cy="215" r="16" fill="#d99f3e"/>
+    <path d="M229 207 q11 -7 22 0" fill="none" stroke="rgba(255, 224, 138, 0.5)" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="234" cy="209" r="2" fill="#7d5218"/>
+    <circle cx="246" cy="213" r="1.8" fill="#7d5218"/>
+    <circle cx="238" cy="220" r="1.9" fill="#7d5218"/>
+    <circle cx="245" cy="219" r="0.9" fill="#ffe9ad" opacity="0.8"/>
+  </g>
+</svg>

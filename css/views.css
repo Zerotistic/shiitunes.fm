@@ -1,0 +1,1032 @@
+/* -------------------------------- views --------------------------------- */
+
+.view {
+  display: none;
+  /* Pinned to the main grid's constrained fr row. Without this, hiding the
+   * data banner shifts the view into an auto row, which grows with content
+   * and hands the whole page a scrollbar. */
+  grid-column: 1;
+  grid-row: 3;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px 0 28px;
+  /* Views scroll, but silently — no scrollbar gutter next to the content. */
+  scrollbar-width: none;
+}
+
+.view::-webkit-scrollbar {
+  display: none;
+}
+
+.view.active {
+  animation: view-in 240ms ease;
+  display: block;
+}
+
+@keyframes view-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.section-heading {
+  align-items: baseline;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.section-heading h2,
+.about-hero-copy h2,
+.upnext-heading h3,
+.hero-title {
+  font-family: "Baloo 2", "Quicksand", sans-serif;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.section-heading h2 {
+  font-size: 22px;
+}
+
+.section-heading span {
+  color: var(--blue-soft-dim);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.section-heading .danger-button {
+  margin-left: auto;
+}
+
+/* ------------------------------ radio view ------------------------------ */
+
+/* The hero owns the whole view: the Up next queue moved into the
+ * now-playing panel, where it is visible from every view. */
+/* No min-height here: pinning the grid to the viewport height always
+ * overshot the space the view actually gets and left the radio page with a
+ * permanent scrollbar. */
+.radio-grid {
+  align-items: start;
+  container-type: inline-size;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.hero-card {
+  background:
+    radial-gradient(circle at 82% 16%, rgba(255, 197, 61, 0.14), transparent 30%),
+    radial-gradient(circle at 18% 88%, rgba(169, 183, 234, 0.12), transparent 28%),
+    rgba(20, 23, 38, 0.78);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: clamp(20px, 3vw, 44px);
+  grid-template-columns: minmax(220px, 36%) minmax(0, 1fr);
+  overflow: hidden;
+  padding: clamp(28px, 4vw, 52px);
+  position: relative;
+}
+
+/* The current track's own cover, blurred, fills the card — every song
+ * recolors the hero. --hero-cover is set by renderHero. */
+.hero-card::before {
+  background-image: var(--hero-cover, none);
+  background-position: center;
+  background-size: cover;
+  content: "";
+  filter: blur(48px) saturate(1.15);
+  inset: -60px;
+  opacity: 0.5;
+  pointer-events: none;
+  position: absolute;
+}
+
+/* Scrim keeps the metadata readable over whatever the blur produces. */
+.hero-card::after {
+  background: linear-gradient(180deg, rgba(15, 17, 29, 0.18) 0%, rgba(15, 17, 29, 0.66) 72%, rgba(15, 17, 29, 0.82) 100%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.hero-art-box .cover-wrap,
+.hero-art-box .cover-art {
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  height: auto;
+  width: 100%;
+}
+
+/* The dvh cap keeps the square art (and so the whole hero) inside short
+ * viewports — the radio page must never need a scrollbar. */
+.hero-art-box {
+  align-self: center;
+  max-width: min(380px, 44dvh);
+  position: relative;
+  z-index: 1;
+}
+
+.hero-art-box .cover-wrap {
+  transition: box-shadow 500ms ease;
+}
+
+.app-shell.is-playing .hero-art-box .cover-wrap {
+  box-shadow: 0 0 44px rgba(255, 197, 61, 0.18);
+}
+
+.hero-art-box .fallback-cover {
+  font-size: 64px;
+}
+
+.hero-meta {
+  align-content: center;
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Plain letterspaced label, and only while it means something: "on air" with
+ * the eq bars while playing, "loading" while tuning. Idle/paused states
+ * belong to the player bar, not the hero. */
+.onair-chip {
+  align-items: center;
+  color: var(--text-dim);
+  display: none;
+  font-size: 12px;
+  font-weight: 700;
+  gap: 7px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.onair-chip.live {
+  color: var(--amber);
+  display: inline-flex;
+}
+
+.onair-chip.loading {
+  color: var(--blue-soft);
+  display: inline-flex;
+}
+
+.chip-bars {
+  align-items: flex-end;
+  display: none;
+  gap: 2px;
+  height: 10px;
+}
+
+.onair-chip.live .chip-bars {
+  display: inline-flex;
+}
+
+.chip-bars span {
+  background: var(--amber);
+  border-radius: 1px;
+  display: block;
+  transform-origin: bottom;
+  width: 3px;
+}
+
+.chip-bars span:nth-child(1) {
+  animation: eq-bounce 860ms ease-in-out -240ms infinite;
+  height: 6px;
+}
+
+.chip-bars span:nth-child(2) {
+  animation: eq-bounce 700ms ease-in-out infinite;
+  height: 10px;
+}
+
+.chip-bars span:nth-child(3) {
+  animation: eq-bounce 980ms ease-in-out -120ms infinite;
+  height: 8px;
+}
+
+@keyframes eq-bounce {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.hero-title {
+  font-size: clamp(28px, 3.2vw, 48px);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.hero-subtitle {
+  color: var(--text-soft);
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.hero-source {
+  color: var(--blue-soft-dim);
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hero-blocked-note {
+  background: var(--amber-soft);
+  border-radius: var(--radius-sm);
+  color: var(--amber);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  padding: 8px 12px;
+}
+
+.hero-blocked-note[hidden] {
+  display: none;
+}
+
+.hero-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.hero-actions .pause-icon {
+  display: none;
+}
+
+.app-shell.is-playing .hero-actions .play-icon {
+  display: none;
+}
+
+.app-shell.is-playing .hero-actions .pause-icon {
+  display: block;
+}
+
+/* Quick stations: one-tap shuffle within a category. */
+.station-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.station-label {
+  color: var(--blue-soft-dim);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-right: 2px;
+  text-transform: uppercase;
+}
+
+.station-chip {
+  align-items: center;
+  background: transparent;
+  border: 1px solid rgba(224, 223, 254, 0.22);
+  border-radius: 8px;
+  color: var(--iris-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 600;
+  height: var(--control-sm);
+  padding: 0 14px;
+  transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+}
+
+.station-chip:hover {
+  background: var(--amber-soft);
+  border-color: var(--amber-line);
+  color: var(--amber);
+}
+
+/* Only genuinely narrow main columns stack art above the metadata — the
+ * side-by-side layout is shorter, so it holds on as long as it fits
+ * horizontally, keeping the view scroll-free on flat laptop screens. (Kept
+ * before the 1080px media block so phone-specific hero rules still win the
+ * cascade.) */
+@container (max-width: 720px) {
+  .hero-card {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    /* Stacked art + meta is tall; slimmer padding keeps it on-screen. */
+    padding: clamp(20px, 3vw, 32px);
+  }
+
+  /* The viewport-height term is the art budget once the player bar, header,
+   * paddings, and the metadata stack (~540px total) are spent — shrink the
+   * art before the view is forced to scroll. */
+  .hero-art-box {
+    align-self: start;
+    max-width: clamp(96px, calc(100dvh - 575px), 240px);
+    width: 100%;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+}
+
+/* Very flat windows: shave the vertical padding the hero can no longer
+ * afford, so the radio view stays scroll-free. */
+@media (max-height: 680px) {
+  .view {
+    padding: 8px 0 12px;
+  }
+
+  .hero-meta {
+    gap: 8px;
+  }
+
+  .hero-card {
+    padding: clamp(16px, 2.5vw, 28px);
+  }
+}
+
+.upnext-heading {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 4px 0;
+}
+
+.upnext-heading h3 {
+  font-size: 17px;
+}
+
+.count-chip {
+  color: var(--blue-soft-dim);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.upnext-list {
+  display: grid;
+  gap: 2px;
+}
+
+/* Flush rows, not floating cards — the hover highlight is the affordance. */
+.queue-card {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 44px minmax(0, 1fr);
+  min-height: 56px;
+  padding: 6px 8px;
+  text-align: left;
+  transition: background 160ms ease;
+}
+
+.queue-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Hand-queued tracks wear the amber thread: they're up next because the
+ * listener put them there, not because the station chose them. */
+.queue-card.queued {
+  box-shadow: inset 2px 0 0 var(--amber-line);
+}
+
+.queue-card .cover-wrap,
+.queue-card .cover-art {
+  height: 44px;
+  width: 44px;
+}
+
+.queue-meta {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.queue-title,
+.library-title,
+.now-title {
+  color: var(--text);
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.library-title.untitled {
+  color: var(--text-soft);
+  font-style: italic;
+  font-weight: 600;
+}
+
+.queue-subtitle,
+.library-artist,
+.library-sub,
+.library-source,
+.now-artist,
+.now-source {
+  color: var(--text-dim);
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 17px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.library-source,
+.library-sub,
+.now-source {
+  color: var(--blue-soft-dim);
+}
+
+/* Mobile-only source line; desktop shows the dedicated source column. */
+.library-sub {
+  display: none;
+}
+
+.queue-end-note {
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 4px 4px 2px;
+  text-align: center;
+}
+
+/* ------------------------------- covers --------------------------------- */
+
+.cover-wrap {
+  display: inline-block;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.cover-art {
+  background: var(--iris);
+  border-radius: var(--radius-sm);
+  display: block;
+  height: 44px;
+  object-fit: cover;
+  width: 44px;
+}
+
+.cover-wrap .cover-art {
+  height: 100%;
+  width: 100%;
+}
+
+.cover-row {
+  height: 44px;
+  width: 44px;
+}
+
+.cover-player {
+  height: 56px;
+  width: 56px;
+}
+
+.fallback-cover {
+  align-items: center;
+  background:
+    radial-gradient(circle at 70% 24%, rgba(255, 197, 61, 0.95) 0 3px, transparent 4px),
+    radial-gradient(circle at 28% 66%, rgba(224, 223, 254, 0.7) 0 2px, transparent 3px),
+    radial-gradient(circle at 74% 76%, rgba(177, 169, 255, 0.55) 0 1px, transparent 2px),
+    linear-gradient(135deg, var(--iris) 0%, var(--iris-deep) 58%, var(--bg) 100%);
+  color: var(--amber);
+  display: inline-grid;
+  font-family: "Baloo 2", "Quicksand", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  justify-items: center;
+  overflow: hidden;
+  place-content: center;
+  position: relative;
+}
+
+/* Seeded star-field variations so identical songs still look distinct. */
+.fallback-cover[data-variant="1"] {
+  background:
+    radial-gradient(circle at 24% 30%, rgba(255, 197, 61, 0.95) 0 3px, transparent 4px),
+    radial-gradient(circle at 72% 58%, rgba(224, 223, 254, 0.7) 0 2px, transparent 3px),
+    radial-gradient(circle at 40% 82%, rgba(177, 169, 255, 0.55) 0 1px, transparent 2px),
+    linear-gradient(155deg, var(--iris-deep) 0%, var(--iris) 52%, var(--bg) 100%);
+}
+
+.fallback-cover[data-variant="2"] {
+  background:
+    radial-gradient(circle at 58% 78%, rgba(255, 197, 61, 0.95) 0 3px, transparent 4px),
+    radial-gradient(circle at 30% 26%, rgba(224, 223, 254, 0.7) 0 2px, transparent 3px),
+    radial-gradient(circle at 82% 34%, rgba(177, 169, 255, 0.55) 0 1px, transparent 2px),
+    linear-gradient(115deg, var(--bg) 0%, var(--iris) 48%, var(--iris-deep) 100%);
+}
+
+.fallback-cover[data-variant="3"] {
+  background:
+    radial-gradient(circle at 82% 66%, rgba(255, 197, 61, 0.95) 0 3px, transparent 4px),
+    radial-gradient(circle at 52% 20%, rgba(224, 223, 254, 0.7) 0 2px, transparent 3px),
+    radial-gradient(circle at 22% 60%, rgba(177, 169, 255, 0.55) 0 1px, transparent 2px),
+    linear-gradient(200deg, var(--iris) 0%, var(--iris-deep) 60%, var(--bg) 100%);
+}
+
+/* ------------------------------ library view ---------------------------- */
+
+.library-head {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.library-controls {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  /* Grid item: without this the nowrap chip row inflates the whole column. */
+  min-width: 0;
+}
+
+.library-controls[hidden] {
+  display: none;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filter-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 0;
+  border-radius: 8px;
+  color: var(--iris-text);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  height: var(--control-sm);
+  padding: 0 14px;
+}
+
+.filter-chip.active {
+  background: var(--iris);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Sort controls read differently from the filter chips on purpose: outlined,
+ * not filled — they reorder the same set instead of narrowing it. */
+.sort-group {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.sort-chip {
+  background: transparent;
+  border: 1px solid rgba(224, 223, 254, 0.25);
+  border-radius: 8px;
+  color: var(--iris-text);
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 600;
+  height: var(--control-sm);
+  letter-spacing: 0.02em;
+  padding: 0 14px;
+}
+
+.sort-chip.active {
+  background: var(--amber-soft);
+  border-color: var(--amber-line);
+  color: var(--amber);
+  font-weight: 700;
+}
+
+/* Inert while a search query owns the ordering (relevance wins). */
+.sort-chip:disabled {
+  border-color: rgba(224, 223, 254, 0.12);
+  color: var(--text-dim);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.sort-chip[hidden] {
+  display: none;
+}
+
+.danger-button {
+  align-items: center;
+  background: var(--danger-soft);
+  border: 0;
+  border-radius: 8px;
+  color: var(--danger);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 8px;
+  height: var(--control-sm);
+  justify-content: center;
+  padding: 0 14px;
+}
+
+.danger-button:hover {
+  background: rgba(255, 107, 138, 0.22);
+}
+
+.danger-button[hidden] {
+  display: none;
+}
+
+.library-table {
+  container-type: inline-size;
+  display: grid;
+  gap: 8px;
+}
+
+.library-rows {
+  display: grid;
+  gap: 0;
+}
+
+/* A continuous tracklist: flush rows over hairlines, with a hover highlight —
+ * not 272 floating cards. */
+.library-row {
+  align-items: center;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--text);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(260px, 1.5fr) minmax(180px, 1fr) 64px 80px;
+  min-height: 56px;
+  padding: 5px 8px;
+  position: relative;
+  transition: background 160ms ease;
+}
+
+.library-row + .library-row::before {
+  background: rgba(224, 223, 254, 0.07);
+  content: "";
+  height: 1px;
+  left: 8px;
+  position: absolute;
+  right: 8px;
+  top: 0;
+}
+
+.library-row:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* The highlight replaces the hairlines around the hovered row. */
+.library-row:hover::before,
+.library-row:hover + .library-row::before {
+  opacity: 0;
+}
+
+.library-row.active {
+  background:
+    linear-gradient(90deg, rgba(255, 197, 61, 0.08), transparent 18%),
+    rgba(32, 34, 72, 0.98);
+  box-shadow: inset 2px 0 0 var(--amber-line);
+}
+
+.library-row.active::before,
+.library-row.active + .library-row::before {
+  opacity: 0;
+}
+
+.library-song {
+  display: block;
+  min-width: 0;
+}
+
+.library-song-cell {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 26px 44px minmax(0, 1fr);
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.row-number {
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.playing-bars {
+  align-items: center;
+  display: none;
+  gap: 3px;
+  justify-content: center;
+  width: 26px;
+}
+
+.playing-bars span {
+  background: rgba(201, 211, 255, 0.78);
+  border-radius: 2px;
+  display: block;
+  transform-origin: bottom;
+  width: 3px;
+}
+
+/* Bars bounce while playing and freeze in place when paused. */
+.app-shell.is-playing .playing-bars span:nth-child(1) {
+  animation: eq-bounce 860ms ease-in-out -240ms infinite;
+}
+
+.app-shell.is-playing .playing-bars span:nth-child(2) {
+  animation: eq-bounce 700ms ease-in-out infinite;
+}
+
+.app-shell.is-playing .playing-bars span:nth-child(3) {
+  animation: eq-bounce 980ms ease-in-out -120ms infinite;
+}
+
+.playing-bars span:nth-child(1) {
+  height: 10px;
+}
+
+.playing-bars span:nth-child(2) {
+  background: var(--amber);
+  height: 18px;
+}
+
+.playing-bars span:nth-child(3) {
+  height: 13px;
+}
+
+.library-row.active .row-number {
+  display: none;
+}
+
+.library-row.active .playing-bars {
+  display: flex;
+}
+
+.library-meta {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.library-source {
+  min-width: 0;
+}
+
+.duration {
+  color: var(--text-soft);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.duration-unknown {
+  color: var(--text-dim);
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.heart-action.active,
+.heart-button.active {
+  color: var(--amber);
+}
+
+.icon-action {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: inline-flex;
+  height: var(--control-sm);
+  justify-content: center;
+  transition: background 140ms ease, color 140ms ease, opacity 140ms ease;
+  width: var(--control-sm);
+}
+
+.icon-action:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
+}
+
+.icon-action svg {
+  height: 17px;
+  width: 17px;
+}
+
+/* List rows keep quiet until pointed at; the lit heart stays visible so
+ * liked songs read at a glance. Touch devices show everything. */
+.library-row .row-actions .icon-action {
+  opacity: 0;
+}
+
+.library-row:hover .row-actions .icon-action,
+.library-row:focus-within .row-actions .icon-action,
+.library-row .row-actions .icon-action.active {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .library-row .row-actions .icon-action {
+    opacity: 1;
+  }
+}
+
+.icon-action:disabled,
+.heart-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+/* Stitched outline: "more fabric to unroll". */
+.show-more-row {
+  align-items: center;
+  background: transparent;
+  border: 1px dashed rgba(224, 223, 254, 0.28);
+  border-radius: var(--radius-sm);
+  color: var(--iris-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 600;
+  height: 44px;
+  justify-content: center;
+  justify-self: center;
+  margin: 12px 0 4px;
+  min-width: 180px;
+  padding: 0 18px;
+  transition: border-color 140ms ease, color 140ms ease;
+}
+
+.show-more-row:hover {
+  border-color: var(--amber-line);
+  color: var(--amber);
+}
+
+/* The main column can get this narrow on laptops whenever the now-playing
+ * panel is open (app grid: 216px | 1fr | up to 340px) — long before the
+ * 1080px mobile breakpoint. Keyed on the library's own width, rows collapse
+ * to the stacked layout instead of overflowing sideways and clipping the
+ * heart/menu actions. */
+@container (max-width: 700px) {
+  .library-row {
+    grid-template-columns: minmax(0, 1fr) 48px 80px;
+    min-height: 72px;
+    padding: 10px;
+  }
+
+  .library-song-cell {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .library-song-cell .row-number,
+  .library-song-cell .playing-bars,
+  .library-row.active .playing-bars {
+    display: none;
+  }
+
+  /* The source column folds into the row's third line (.library-sub) so
+   * duplicate songs stay tellable apart. */
+  .library-source {
+    display: none;
+  }
+
+  .library-sub {
+    display: block;
+  }
+}
+
+/* ------------------------------- buttons -------------------------------- */
+
+/* Only the primary Play action keeps the pill shape — everything else sits
+ * on the 8-10px radius the rest of the app uses. */
+.primary-action,
+.secondary-button {
+  align-items: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 8px;
+  height: var(--control-md);
+  justify-content: center;
+  padding: 0 16px;
+  text-decoration: none;
+  transition: transform 120ms ease, filter 120ms ease, background 140ms ease;
+  white-space: nowrap;
+}
+
+.primary-action:hover {
+  filter: brightness(1.06);
+}
+
+.primary-action:active,
+.secondary-button:active,
+.play-button:active,
+.icon-action:active,
+.filter-chip:active,
+.danger-button:active {
+  transform: scale(0.96);
+}
+
+.primary-action {
+  background: var(--amber);
+  border-radius: 999px;
+  color: var(--amber-text);
+  font-size: 14px;
+  font-weight: 700;
+  height: var(--control-lg);
+  padding: 0 22px;
+}
+
+.primary-action svg,
+.secondary-button svg {
+  height: 18px;
+  width: 18px;
+}
+
+.secondary-button {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--iris-text);
+}
+
+.secondary-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Icon-only hero buttons sit quiet next to Play — bare glyphs, not a row of
+ * filled circles competing with the primary action. Doubled selectors outrank
+ * the generic button rules above regardless of source order — the earlier
+ * single-class version lost its padding/size overrides and crushed the icons
+ * to 8px. */
+.hero-icon-button.hero-icon-button {
+  background: transparent;
+  border-radius: 8px;
+  color: var(--text-dim);
+  padding: 0;
+  width: var(--control-md);
+}
+
+.hero-icon-button.hero-icon-button:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
+}
+
+.hero-icon-button.hero-icon-button.active {
+  color: var(--amber);
+}
+
+.hero-icon-button.hero-icon-button svg {
+  height: 22px;
+  width: 22px;
+}
+

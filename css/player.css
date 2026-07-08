@@ -1,0 +1,727 @@
+/* ----------------------------- bottom player ---------------------------- */
+
+.bottom-player {
+  align-items: center;
+  background: rgba(17, 19, 31, 0.98);
+  bottom: 0;
+  box-shadow: 0 -10px 24px rgba(5, 6, 17, 0.3);
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(200px, 340px) minmax(300px, 1fr) auto;
+  height: var(--player-height);
+  left: 0;
+  padding: 12px 24px;
+  position: fixed;
+  right: 0;
+  z-index: 20;
+}
+
+.bottom-player::before {
+  background: rgba(255, 255, 255, 0.12);
+  content: "";
+  height: 1px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+/* Echo of the header's amber stitch on the player's top hairline. */
+.bottom-player::after {
+  background: linear-gradient(90deg, rgba(255, 197, 61, 0.35) 0 4px, transparent 4px 10px);
+  content: "";
+  height: 1px;
+  left: 24px;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 72px;
+}
+
+.now-block {
+  align-items: center;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) var(--control-sm);
+  min-width: 0;
+}
+
+/* Art + titles double as the shortcut back to the radio view. */
+.now-open {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 56px minmax(0, 1fr);
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.now-copy {
+  display: grid;
+  min-width: 0;
+}
+
+.now-title {
+  font-size: 15px;
+}
+
+.current-like {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: inline-flex;
+  height: var(--control-sm);
+  justify-content: center;
+  width: var(--control-sm);
+}
+
+.current-like svg {
+  height: 17px;
+  width: 17px;
+}
+
+.transport-block {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.controls-row {
+  align-items: center;
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+}
+
+.icon-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--blue-soft);
+  cursor: pointer;
+  display: inline-flex;
+  height: var(--control-sm);
+  justify-content: center;
+  position: relative;
+  width: var(--control-sm);
+}
+
+.icon-button:hover,
+.icon-button.active {
+  color: var(--amber);
+}
+
+.icon-button.repeat-one::after {
+  background: var(--amber);
+  border-radius: 999px;
+  color: var(--amber-text);
+  content: "1";
+  font-size: 9px;
+  font-weight: 800;
+  height: 12px;
+  line-height: 12px;
+  position: absolute;
+  right: -2px;
+  text-align: center;
+  top: -2px;
+  width: 12px;
+}
+
+.icon-button svg {
+  height: 20px;
+  width: 20px;
+}
+
+/* The play button is Sad Bee: asleep while paused, bobbing while playing.
+ * A small amber badge keeps a conventional play/pause glyph for recognition. */
+.play-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  height: 56px;
+  justify-content: center;
+  position: relative;
+  width: 56px;
+}
+
+.play-badge {
+  align-items: center;
+  background: var(--amber);
+  border-radius: 999px;
+  bottom: -3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  color: var(--amber-text);
+  display: inline-flex;
+  height: 18px;
+  justify-content: center;
+  position: absolute;
+  right: -5px;
+  width: 18px;
+}
+
+.app-shell.is-loading .play-badge {
+  background: var(--blue-soft);
+}
+
+.play-badge svg {
+  height: 10px;
+  width: 10px;
+}
+
+.play-button .pause-icon,
+.app-shell.is-playing .play-button .play-icon {
+  display: none;
+}
+
+.app-shell.is-playing .play-button .pause-icon {
+  display: block;
+}
+
+.progress-row {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 44px minmax(140px, 340px) 44px;
+  justify-content: center;
+  width: 100%;
+}
+
+/* --------------------------- the heavenly river -------------------------- */
+/* "Amanogawa" means Milky Way: the played part of the seek bar is a band of
+ * star-dust that drifts while the music plays and freezes on pause. */
+
+.progress-track {
+  background:
+    radial-gradient(circle at 18% 30%, rgba(224, 223, 254, 0.35) 0 0.5px, transparent 1.2px),
+    radial-gradient(circle at 71% 68%, rgba(224, 223, 254, 0.22) 0 0.5px, transparent 1.2px),
+    rgba(255, 255, 255, 0.12);
+  background-size: 47px 5px, 73px 5px, auto;
+  border-radius: 3px;
+  cursor: pointer;
+  height: 5px;
+  position: relative;
+  touch-action: none;
+}
+
+/* Without a known duration the bar is display-only (see syncSeekable). */
+.progress-track[data-seekable="false"] {
+  cursor: default;
+}
+
+/* Three star layers tile at different widths and pan by exactly one tile per
+ * loop, so the drift never visibly repeats or jumps. */
+.progress-fill {
+  background:
+    radial-gradient(circle at 9px 1.5px, rgba(255, 255, 255, 0.95) 0 0.6px, transparent 1.5px),
+    radial-gradient(circle at 21px 3.5px, rgba(224, 223, 254, 0.85) 0 0.5px, transparent 1.3px),
+    radial-gradient(circle at 34px 2px, rgba(255, 236, 190, 0.95) 0 0.7px, transparent 1.6px),
+    linear-gradient(90deg, rgba(255, 197, 61, 0.72), var(--amber));
+  background-size: 41px 5px, 57px 5px, 69px 5px, auto;
+  border-radius: 3px;
+  box-shadow: 0 0 12px rgba(255, 197, 61, 0.35);
+  display: block;
+  height: 5px;
+  /* Glides between 500ms progress polls; see setProgressRatio. */
+  transition: width 520ms linear;
+  width: 0;
+}
+
+.app-shell.is-playing .progress-fill {
+  animation: river-drift 8s linear infinite;
+}
+
+@keyframes river-drift {
+  to {
+    background-position: 41px 0, -57px 0, 69px 0, 0 0;
+  }
+}
+
+/* A little star rides the river. Visual only — the drag target is the
+ * full-height track, unchanged. The wrap carries position + trail sparks so
+ * the star's clip-path cannot clip them. */
+.knot-wrap {
+  height: 13px;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: -4px;
+  transition: left 520ms linear;
+  width: 13px;
+}
+
+/* Seeks, track changes, and drags move the star directly, with no easing. */
+.progress-track.progress-snap .progress-fill,
+.progress-track.progress-snap .knot-wrap,
+.progress-track.scrubbing .progress-fill,
+.progress-track.scrubbing .knot-wrap {
+  transition: none;
+}
+
+.thread-knot {
+  background: var(--amber);
+  clip-path: polygon(50% 0%, 62% 36%, 100% 38%, 70% 60%, 81% 100%, 50% 76%, 19% 100%, 30% 60%, 0% 38%, 38% 36%);
+  filter: drop-shadow(0 0 5px rgba(255, 197, 61, 0.65));
+  height: 13px;
+  position: absolute;
+  width: 13px;
+}
+
+.app-shell.is-playing .thread-knot {
+  animation: knot-twinkle 2.4s ease-in-out infinite;
+}
+
+/* A glow-pulse only: scale/rotate wobble on top of the traveling star made
+ * its motion read as jitter. */
+@keyframes knot-twinkle {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 3px rgba(255, 197, 61, 0.5));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(255, 224, 130, 0.95));
+    transform: scale(1.1);
+  }
+}
+
+/* Two tiny sparks trail behind the riding star while playing. */
+.knot-spark {
+  background: rgba(255, 224, 130, 0.95);
+  clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
+  height: 5px;
+  left: -8px;
+  opacity: 0;
+  position: absolute;
+  top: 3px;
+  width: 5px;
+}
+
+.knot-spark:last-child {
+  background: rgba(224, 223, 254, 0.9);
+  height: 4px;
+  left: -14px;
+  top: 6px;
+  width: 4px;
+}
+
+.app-shell.is-playing .knot-spark {
+  animation: spark-trail 1.3s ease-out infinite;
+}
+
+.app-shell.is-playing .knot-spark:last-child {
+  animation-delay: 0.65s;
+  animation-duration: 1.5s;
+}
+
+@keyframes spark-trail {
+  0% {
+    opacity: 0;
+    transform: translateX(3px) scale(0.5);
+  }
+  25% {
+    opacity: 0.95;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-7px) scale(0.4) rotate(40deg);
+  }
+}
+
+/* One-shot: streaks the full bar when a song ends (see shootStarAcross). */
+.shooting-star {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95));
+  border-radius: 999px;
+  filter: drop-shadow(0 0 4px rgba(255, 197, 61, 0.8));
+  height: 2px;
+  left: -36px;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  width: 34px;
+  z-index: 1;
+}
+
+.shooting-star::after {
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: 0 0 6px rgba(255, 236, 190, 0.95);
+  content: "";
+  height: 3.5px;
+  position: absolute;
+  right: -1px;
+  top: -0.75px;
+  width: 3.5px;
+}
+
+.shooting-star {
+  animation: star-shoot 750ms cubic-bezier(0.25, 0.6, 0.35, 1) forwards;
+}
+
+@keyframes star-shoot {
+  0% {
+    opacity: 0;
+    transform: translate(0, -50%);
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--shoot-distance, 400px), -50%);
+  }
+}
+
+/* One-shot: a liked song flicks an extra star into the river. */
+.river-star {
+  background: var(--amber);
+  clip-path: polygon(50% 0%, 62% 36%, 100% 38%, 70% 60%, 81% 100%, 50% 76%, 19% 100%, 30% 60%, 0% 38%, 38% 36%);
+  filter: drop-shadow(0 0 4px rgba(255, 197, 61, 0.7));
+  height: 8px;
+  margin-top: -4px;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  z-index: 1;
+}
+
+.river-star {
+  animation: river-star-in 2.8s ease forwards;
+}
+
+@keyframes river-star-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.4) rotate(-50deg);
+  }
+  16% {
+    opacity: 1;
+    transform: translateY(0) scale(1.2) rotate(0deg);
+  }
+  28% {
+    transform: scale(0.9);
+  }
+  40%,
+  78% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+.duration-label {
+  color: var(--text-soft);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.duration-label:first-child {
+  text-align: right;
+}
+
+.player-actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.volume-field {
+  align-items: center;
+  color: var(--blue-soft);
+  display: inline-flex;
+  gap: 8px;
+}
+
+.volume-field > svg {
+  flex: 0 0 auto;
+  height: 18px;
+  width: 18px;
+}
+
+.volume-field input {
+  accent-color: var(--amber);
+  cursor: pointer;
+  width: 88px;
+}
+
+
+/* ---------------------------- now-playing panel ------------------------- */
+/* The video is always visible while it plays — hidden-but-audible video is
+ * a YouTube ToS problem and confuses users. The iframe never moves in the
+ * DOM (moving it reloads the player). */
+
+/* Flex column, not grid: a grid row sized only by the frame's aspect-ratio
+ * collapses to 0 once the queue overflows the panel's max-height. */
+.now-panel {
+  background: rgba(15, 17, 31, 0.96);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: calc(100dvh - var(--player-height));
+  /* The video and info stay put; only the Up next list scrolls. */
+  overflow: hidden;
+  padding: 14px 16px 16px;
+  position: sticky;
+  top: 0;
+}
+
+.now-panel[hidden] {
+  display: none;
+}
+
+.panel-head {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* The expand/collapse chrome only exists on the mobile mini/sheet; desktop
+ * toggles the whole panel from the player bar. */
+.panel-head-actions {
+  display: none;
+  gap: 6px;
+}
+
+.panel-chrome-btn {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 0;
+  border-radius: 8px;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: inline-flex;
+  height: 26px;
+  justify-content: center;
+  transition: background 140ms ease, color 140ms ease;
+  width: 26px;
+}
+
+.panel-chrome-btn:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: var(--text);
+}
+
+.panel-chrome-btn svg {
+  height: 16px;
+  transition: transform 220ms ease;
+  width: 16px;
+}
+
+.panel-frame {
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
+  background:
+    radial-gradient(circle at 70% 24%, rgba(255, 197, 61, 0.16), transparent 30%),
+    var(--bg-deep);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+}
+
+.panel-frame > div,
+.panel-frame iframe {
+  border: 0;
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+/* Pre-play placeholder: the selected track's cover art, dimmed, under the
+ * "press play" hint — set via --panel-cover from renderNowPanel. */
+.panel-overlay {
+  background-color: var(--bg-deep);
+  background-image: linear-gradient(165deg, rgba(9, 11, 22, 0.62), rgba(9, 11, 22, 0.8)), var(--panel-cover, none);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: var(--text-soft);
+  display: grid;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 8px;
+  inset: 0;
+  justify-items: center;
+  place-content: center;
+  position: absolute;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+
+.panel-overlay svg {
+  color: var(--amber);
+  height: 20px;
+  width: 20px;
+}
+
+.now-panel.has-video .panel-overlay {
+  display: none;
+}
+
+.panel-info {
+  display: grid;
+  flex-shrink: 0;
+  gap: 6px;
+  justify-items: start;
+}
+
+.panel-kicker {
+  color: var(--blue-soft-dim);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.panel-title {
+  color: var(--text);
+  font-family: "Baloo 2", "Quicksand", sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.panel-artist {
+  color: var(--text-soft);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.panel-source {
+  color: var(--blue-soft-dim);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.panel-note {
+  background: var(--amber-soft);
+  border-radius: var(--radius-sm);
+  color: var(--amber);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  padding: 8px 12px;
+}
+
+.panel-note[hidden] {
+  display: none;
+}
+
+/* Inline escape hatch inside the blocked-track note. */
+.note-link {
+  background: transparent;
+  border: 0;
+  color: var(--amber);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
+
+/* Flex column with a scrollable list: the heading stays pinned while the
+ * queue scrolls under it. */
+.panel-upnext {
+  border-top: 1px dashed rgba(224, 223, 254, 0.14);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding-top: 12px;
+}
+
+.panel-upnext .upnext-heading {
+  flex-shrink: 0;
+  padding: 0;
+}
+
+/* No scrollbar: soft edge fades (below) say "there's more" instead. */
+.panel-upnext .upnext-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.panel-upnext .upnext-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* fade-top/fade-bottom are kept in sync with the scroll position by
+ * syncQueueFade in render.js. */
+.panel-upnext .upnext-list.fade-bottom {
+  mask-image: linear-gradient(180deg, #000 calc(100% - 40px), transparent 100%);
+}
+
+.panel-upnext .upnext-list.fade-top {
+  mask-image: linear-gradient(180deg, transparent 0, #000 40px);
+}
+
+.panel-upnext .upnext-list.fade-top.fade-bottom {
+  mask-image: linear-gradient(180deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+}
+
+.panel-upnext h3 {
+  font-size: 15px;
+}
+
+/* Player-bar toggle for the panel — lit while the panel is showing. */
+.panel-toggle.active {
+  color: var(--amber);
+}
+
+/* ------------------------------ heart burst ------------------------------ */
+
+.heart-burst {
+  pointer-events: none;
+  position: fixed;
+  z-index: 60;
+}
+
+.heart-burst-bit {
+  animation: heart-pop 620ms ease-out forwards;
+  color: var(--amber);
+  font-size: 12px;
+  left: 0;
+  line-height: 1;
+  position: absolute;
+  top: 0;
+}
+
+.heart-burst-bit:nth-child(2n) {
+  color: var(--danger);
+  font-size: 9px;
+}
+
+@keyframes heart-pop {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(var(--spin));
+  }
+}
+
