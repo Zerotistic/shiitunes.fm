@@ -105,14 +105,14 @@
     <path d="M108 52 Q120 44 134 46" fill="none" stroke="#ffe9ad" stroke-width="3" stroke-linecap="round"/>
     <!-- ahoge -->
     <path class="chibi-ahoge" d="M128 44 Q124 30 138 27 Q128 35 134 42" fill="#f7d67f"/>
-    <!-- white head ribbon -->
-    <g class="chibi-ribbon">
+    <!-- white head ribbon (mirrored to her left side, matching the model) -->
+    <g class="chibi-ribbon" transform="translate(260 0) scale(-1 1)">
       <path d="M100 50 Q86 42 84 54 Q86 64 100 57 Z" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2"/>
       <path d="M100 50 Q112 38 118 48 Q116 60 102 58 Z" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2"/>
       <circle cx="100" cy="53" r="3.4" fill="#f7f5ff" stroke="#c9cfe8" stroke-width="1.2"/>
     </g>
-    <!-- celestial scissors pin -->
-    <g class="chibi-scissors" transform="rotate(-24 160 63)">
+    <!-- celestial scissors pin (mirrored to her right side, matching the model) -->
+    <g class="chibi-scissors" transform="translate(260 0) scale(-1 1) rotate(-24 160 63)">
       <path d="M153 56 L167 70 M153 70 L167 56" fill="none" stroke="#c3cae6" stroke-width="2.2" stroke-linecap="round"/>
       <circle cx="151.5" cy="54.5" r="2.4" fill="none" stroke="#c3cae6" stroke-width="1.8"/>
       <circle cx="151.5" cy="71.5" r="2.4" fill="none" stroke="#c3cae6" stroke-width="1.8"/>

@@ -42,7 +42,7 @@ export function initRender(userActions) {
     "nowPanel", "panelOverlay", "panelTitle", "panelArtist", "panelSource",
     "panelBlockedNote", "panelBlockedOpenBtn",
     "panelToggleBtn", "panelHideBtn",
-    "aboutMoments", "aboutStreams", "aboutLiked", "toast"
+    "aboutMoments", "aboutStreams", "aboutLiked", "aboutLikedLabel", "toast"
   ];
   ids.forEach((id) => {
     nodes[id] = document.getElementById(id);
@@ -628,8 +628,18 @@ async function injectChibi() {
   }
 }
 
+/* The liked stat's caption talks back — zero likes doesn't get to pass
+ * without comment, and enough of them earns the fan-name title. */
+function likedStatLabel(count) {
+  if (count === 0) return "songs liked… they're all so good though?";
+  if (count < 10) return "songs liked — finally, some taste";
+  if (count < 30) return "songs liked — okay, you get it";
+  return "songs liked — real Butter Cookie";
+}
+
 function renderAbout() {
   injectChibi();
+  nodes.aboutLikedLabel.textContent = likedStatLabel(state.playlists.liked.length);
   const streams = new Set(state.tracks.map((track) => track.source)).size;
   const stats = [
     [nodes.aboutMoments, state.tracks.length],
