@@ -101,6 +101,7 @@ function loadYouTubeApi(track) {
           onReady: () => {
             ytReady = true;
             tagYouTubeIframe();
+            disableCaptions();
             if (desiredVolume !== null) ytPlayer.setVolume(desiredVolume);
             resolve(ytPlayer);
           },
@@ -132,9 +133,22 @@ function loadYouTubeApi(track) {
   return apiPromise;
 }
 
+/* No URL param turns captions off (cc_load_policy only forces them ON);
+ * unloading the captions module is the supported API route. Each new video
+ * reloads the module, so this runs again on every PLAYING transition. */
+function disableCaptions() {
+  try {
+    ytPlayer.unloadModule("captions");
+    ytPlayer.unloadModule("cc");
+  } catch {
+    /* Module may not exist yet — the next state change tries again. */
+  }
+}
+
 function handlePlayerState(playerState) {
   if (!window.YT || !window.YT.PlayerState) return;
   if (playerState === YT.PlayerState.PLAYING) {
+    disableCaptions();
     startProgressTimer();
     handlers.onStatus("playing");
   }
