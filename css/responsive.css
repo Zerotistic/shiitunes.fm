@@ -227,6 +227,17 @@
     grid-template-columns: 1fr;
   }
 
+  .about-outro {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .outro-cta {
+    justify-content: center;
+    margin-left: 0;
+  }
+
   .bottom-player {
     align-items: center;
     gap: 8px 14px;

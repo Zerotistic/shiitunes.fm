@@ -495,10 +495,87 @@
   padding: 3px 7px;
 }
 
-.about-links {
+/* Outro banner: the page's one outbound CTA. A full card (not a lone pill)
+ * so the "go subscribe" beat lands with the same weight as the hero. */
+.about-outro {
+  align-items: center;
+  background:
+    radial-gradient(circle at 88% 0%, rgba(255, 197, 61, 0.16), transparent 46%),
+    radial-gradient(circle at 8% 100%, rgba(142, 154, 222, 0.14), transparent 42%),
+    rgba(20, 23, 38, 0.78);
+  border: 1px solid rgba(255, 197, 61, 0.22);
+  border-radius: var(--radius-lg);
+  color: inherit;
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  gap: 18px;
+  overflow: hidden;
+  padding: 20px 24px;
+  position: relative;
+  text-decoration: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.about-outro:hover,
+.about-outro:focus-visible {
+  border-color: rgba(255, 197, 61, 0.55);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 197, 61, 0.14) inset;
+  transform: translateY(-2px);
+}
+
+/* Oversized watermark star bleeding off the right edge. */
+.outro-star {
+  color: rgba(255, 197, 61, 0.1);
+  inset: -34px -30px auto auto;
+  pointer-events: none;
+  position: absolute;
+  transition: color 180ms ease, transform 320ms ease;
+}
+
+.outro-star svg {
+  height: 130px;
+  width: 130px;
+}
+
+.about-outro:hover .outro-star {
+  color: rgba(255, 197, 61, 0.2);
+  transform: rotate(14deg);
+}
+
+.outro-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.outro-copy strong {
+  font-family: "Baloo 2", "Quicksand", sans-serif;
+  font-size: 18px;
+}
+
+.outro-copy > span {
+  color: var(--text-soft);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.outro-cta {
+  align-items: center;
+  background: var(--amber);
+  border-radius: 999px;
+  color: #241a02;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 700;
+  gap: 8px;
+  margin-left: auto;
+  padding: 11px 18px;
+  white-space: nowrap;
+}
+
+.outro-cta svg {
+  height: 16px;
+  width: 16px;
 }
 
 
