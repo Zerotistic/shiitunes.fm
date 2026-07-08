@@ -43,7 +43,9 @@ function trackEndSeconds(track) {
 
 function youtubeIdentityParams() {
   const params = new URLSearchParams({
-    controls: "1",
+    /* The app owns all transport UI — hide YouTube's control bar so hovering
+     * the video doesn't stack a second set of controls over it. */
+    controls: "0",
     enablejsapi: "1",
     playsinline: "1",
     rel: "0"
