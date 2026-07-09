@@ -794,24 +794,24 @@
     "durationSeconds": 204
   },
   {
-    "id": "Fy7ddrT2PGw-2976",
+    "id": "Fy7ddrT2PGw-3030",
     "videoId": "Fy7ddrT2PGw",
     "title": "Magnetic",
     "artist": "ILLIT",
     "source": "Singing to You for a Mid-Week Boost!",
     "category": "karaoke",
-    "startSeconds": 2976,
-    "durationSeconds": 212
+    "startSeconds": 3030,
+    "durationSeconds": 157
   },
   {
-    "id": "Fy7ddrT2PGw-4289",
+    "id": "Fy7ddrT2PGw-4276",
     "videoId": "Fy7ddrT2PGw",
     "title": "Loveless",
     "artist": "Yamashita Tomohisa",
     "source": "Singing to You for a Mid-Week Boost!",
     "category": "karaoke",
-    "startSeconds": 4289,
-    "durationSeconds": 196
+    "startSeconds": 4276,
+    "durationSeconds": 214
   },
   {
     "id": "Fy7ddrT2PGw-4704",
@@ -1664,5 +1664,16 @@
     "category": "stream",
     "startSeconds": 32794,
     "durationSeconds": 70
+  },
+  {
+    "id": "pLz-y1yJwMQ-0",
+    "videoId": "pLz-y1yJwMQ",
+    "title": "時の流れに身をまかせ / Toki no Nagare ni Mi o Makase",
+    "artist": "Teresa Teng",
+    "source": "Toki no Nagare ni Mi o Makase (時の流れに身をまかせ) - Teresa Teng /Cover by Shiina",
+    "category": "cover",
+    "startSeconds": 0,
+    "durationSeconds": 249,
+    "publishedAt": "2026-07-07"
   }
 ]

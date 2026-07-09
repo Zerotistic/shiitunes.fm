@@ -10,7 +10,7 @@ import { cleanText, formatClock, formatDate, readSeconds } from "./utils.js";
 
 /* Bump with the ?v= stamps in index.html on every export/deploy: the stamp
  * busts caches so the fetch itself can use normal HTTP caching. */
-const DATA_VERSION = "22";
+const DATA_VERSION = "23";
 const DATA_URL = `./data/tracks.json?v=${DATA_VERSION}`;
 const SHARE_LEAD_SECONDS = 4;
 export const UNTITLED_LABEL = "Untitled singing moment";
