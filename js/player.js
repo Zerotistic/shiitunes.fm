@@ -15,6 +15,10 @@ let apiPromise = null;
 let progressTimer = null;
 let loadedTrack = null;
 let desiredVolume = null;
+/* A play intent not yet confirmed by a PLAYING event. If the player comes to
+ * rest CUED instead (an autoplay attempt the browser swallowed), one nudge
+ * gets it moving — see handlePlayerState. */
+let pendingPlay = false;
 
 let handlers = {
   onStatus() {},
@@ -68,7 +72,7 @@ function tagYouTubeIframe(iframe = null) {
   iframe.setAttribute("allowfullscreen", "");
 }
 
-function ensureYouTubeIframe(track) {
+function ensureYouTubeIframe(track, { autoplay = false } = {}) {
   const existing = document.getElementById("youtubePlayer");
   if (existing?.tagName === "IFRAME") {
     tagYouTubeIframe(existing);
@@ -84,26 +88,52 @@ function ensureYouTubeIframe(track) {
 
   const videoId = encodeURIComponent(track?.videoId || "");
   const params = youtubeIdentityParams();
-  if (track?.startSeconds) params.set("start", String(track.startSeconds));
+  if (track) {
+    const request = playbackRequest(track);
+    if (request.startSeconds) params.set("start", String(request.startSeconds));
+    if (request.endSeconds) params.set("end", String(Math.ceil(request.endSeconds)));
+  }
+  if (autoplay) params.set("autoplay", "1");
   /* Privacy-enhanced host: no YouTube cookies until playback starts. */
   iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
   existing?.replaceWith(iframe);
   return iframe;
 }
 
-function loadYouTubeApi(track) {
+export function isPlayerBooted() {
+  return apiPromise !== null;
+}
+
+function loadYouTubeApi(track, { autoplay = false } = {}) {
   if (apiPromise) return apiPromise;
+
+  /* The iframe is created NOW, synchronously inside the user's gesture, not
+   * after the API script arrives. When the boot carries a play intent, the
+   * src's autoplay=1 (plus start/end) lets the embed start itself the moment
+   * it loads — a later postMessage play command would run after the click's
+   * activation expired, and browsers swallow it. That was the "first play of
+   * a visit needs pause-then-play" bug. */
+  ensureYouTubeIframe(track, { autoplay });
+  const bootTrack = track || null;
 
   apiPromise = new Promise((resolve, reject) => {
     const buildPlayer = () => {
-      ensureYouTubeIframe(track);
       ytPlayer = new YT.Player("youtubePlayer", {
         events: {
           onReady: () => {
             ytReady = true;
+            /* The boot video is baked into the iframe src — record it so the
+             * awaiting caller takes the playVideo/skip path, not a redundant
+             * loadVideoById that would restart the load. */
+            if (bootTrack) loadedTrack = bootTrack;
             tagYouTubeIframe();
             disableCaptions();
             if (desiredVolume !== null) ytPlayer.setVolume(desiredVolume);
+            /* An autoplay boot can already be PLAYING before the API attaches
+             * — the transition event is gone, so replay it. */
+            if (window.YT?.PlayerState && ytPlayer.getPlayerState?.() === YT.PlayerState.PLAYING) {
+              handlePlayerState(YT.PlayerState.PLAYING);
+            }
             resolve(ytPlayer);
           },
           onStateChange: (event) => handlePlayerState(event.data),
@@ -149,11 +179,20 @@ function disableCaptions() {
 function handlePlayerState(playerState) {
   if (!window.YT || !window.YT.PlayerState) return;
   if (playerState === YT.PlayerState.PLAYING) {
+    pendingPlay = false;
     disableCaptions();
     startProgressTimer();
     handlers.onStatus("playing");
   }
+  /* Coming to rest CUED while a play was asked for = the browser blocked the
+   * autoplay attempt. One nudge; if that's blocked too, the next real press
+   * lands on a ready player and works. */
+  if (playerState === YT.PlayerState.CUED && pendingPlay) {
+    pendingPlay = false;
+    if (typeof ytPlayer?.playVideo === "function") ytPlayer.playVideo();
+  }
   if (playerState === YT.PlayerState.PAUSED) {
+    pendingPlay = false;
     stopProgressTimer();
     handlers.onStatus("paused");
   }
@@ -186,7 +225,8 @@ function playbackRequest(track) {
 export async function playTrack(track) {
   const request = playbackRequest(track);
   try {
-    const player = await loadYouTubeApi(track);
+    pendingPlay = true;
+    const player = await loadYouTubeApi(track, { autoplay: true });
     if (loadedTrack?.id !== track.id) {
       loadedTrack = track;
       player.loadVideoById(request);
@@ -205,9 +245,14 @@ export async function playTrack(track) {
 export async function cueTrack(track) {
   const request = playbackRequest(track);
   try {
+    pendingPlay = false;
     const player = await loadYouTubeApi(track);
-    loadedTrack = track;
-    player.cueVideoById(request);
+    /* A boot for this same track already sits cued in the iframe src —
+     * re-cueing would just refetch it. */
+    if (loadedTrack?.id !== track.id) {
+      loadedTrack = track;
+      player.cueVideoById(request);
+    }
     return true;
   } catch {
     return false;

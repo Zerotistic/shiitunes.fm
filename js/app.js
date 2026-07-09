@@ -14,7 +14,7 @@ import { loadTracks } from "./data.js";
 import { LIKED_ID, currentTrack, state } from "./state.js";
 import * as playlists from "./playlists.js";
 import { rebuildPlayOrder } from "./queue.js";
-import { cueTrack, setPlayerVolume } from "./player.js";
+import { cueTrack, isPlayerBooted, setPlayerVolume } from "./player.js";
 import { initRender, nodes, renderAll, renderBanner, renderSkeletons } from "./render.js";
 import { openContextMenu, openTrackMenu } from "./menu.js";
 import { initRouter, navigate } from "./router.js";
@@ -111,14 +111,21 @@ function handleTrackLink(params) {
   if (state.currentId) warmPlayerOnFirstInteraction();
 }
 
+/* click, not pointerdown: pointerdown fires before the play button's own
+ * click handler, so a Play press as the first touch of the page used to boot
+ * the player as a cue — and the real play request then landed as a blocked,
+ * activation-less command. On click the app's handlers have already run, and
+ * the booted() guard stands down when the press was a play. */
 function warmPlayerOnFirstInteraction() {
   const warm = () => {
-    document.removeEventListener("pointerdown", warm);
-    document.removeEventListener("keydown", warm);
-    if (state.currentId) cueTrack(currentTrack());
+    document.removeEventListener("click", warm);
+    window.removeEventListener("keydown", warm);
+    if (!isPlayerBooted() && state.currentId) cueTrack(currentTrack());
   };
-  document.addEventListener("pointerdown", warm, { passive: true });
-  document.addEventListener("keydown", warm);
+  document.addEventListener("click", warm, { passive: true });
+  /* window, registered after bindings' shortcuts: a space-to-play first
+   * keystroke reaches playTrack before warm sees the event. */
+  window.addEventListener("keydown", warm);
 }
 
 /* Shared playlist links (?pl=): decode, confirm, save a copy. Asking first

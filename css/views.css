@@ -164,13 +164,12 @@
   z-index: 1;
 }
 
-/* Plain letterspaced label, and only while it means something: "on air" with
- * the eq bars while playing, "loading" while tuning. Idle/paused states
- * belong to the player bar, not the hero. */
+/* Always rendered so the hero text never jumps when playback state changes:
+ * dim for paused/ready, amber with eq bars on air, blue while tuning. */
 .onair-chip {
   align-items: center;
   color: var(--text-dim);
-  display: none;
+  display: inline-flex;
   font-size: 12px;
   font-weight: 700;
   gap: 7px;
@@ -180,12 +179,10 @@
 
 .onair-chip.live {
   color: var(--amber);
-  display: inline-flex;
 }
 
 .onair-chip.loading {
   color: var(--blue-soft);
-  display: inline-flex;
 }
 
 .chip-bars {
