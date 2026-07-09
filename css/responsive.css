@@ -291,7 +291,8 @@
     top: -16px;
   }
 
-  .progress-fill {
+  .progress-fill,
+  .progress-fill-river {
     border-radius: 0;
     height: 4px;
   }

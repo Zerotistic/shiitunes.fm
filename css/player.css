@@ -244,9 +244,27 @@
   cursor: default;
 }
 
+/* The fill animates transform, not width, so progress stays off the main
+ * thread (compositor-only). The fill is a full-width clip window scaled to
+ * the played ratio; the river inside carries the star-dust and is counter-
+ * scaled by 1/ratio (see setProgressRatio), so the stars keep their true
+ * size instead of squashing with the window. */
+.progress-fill {
+  border-radius: 3px;
+  box-shadow: 0 0 12px rgba(255, 197, 61, 0.35);
+  display: block;
+  height: 5px;
+  overflow: hidden;
+  transform: scaleX(0);
+  transform-origin: left center;
+  /* Glides between 500ms progress polls; see setProgressRatio. */
+  transition: transform 520ms linear;
+  width: 100%;
+}
+
 /* Three star layers tile at different widths and pan by exactly one tile per
  * loop, so the drift never visibly repeats or jumps. */
-.progress-fill {
+.progress-fill-river {
   background:
     radial-gradient(circle at 9px 1.5px, rgba(255, 255, 255, 0.95) 0 0.6px, transparent 1.5px),
     radial-gradient(circle at 21px 3.5px, rgba(224, 223, 254, 0.85) 0 0.5px, transparent 1.3px),
@@ -254,15 +272,14 @@
     linear-gradient(90deg, rgba(255, 197, 61, 0.72), var(--amber));
   background-size: 41px 5px, 57px 5px, 69px 5px, auto;
   border-radius: 3px;
-  box-shadow: 0 0 12px rgba(255, 197, 61, 0.35);
   display: block;
   height: 5px;
-  /* Glides between 500ms progress polls; see setProgressRatio. */
-  transition: width 520ms linear;
-  width: 0;
+  transform-origin: left center;
+  transition: transform 520ms linear;
+  width: 100%;
 }
 
-.app-shell.is-playing .progress-fill {
+.app-shell.is-playing .progress-fill-river {
   animation: river-drift 8s linear infinite;
 }
 
@@ -274,21 +291,25 @@
 
 /* A little star rides the river. Visual only — the drag target is the
  * full-height track, unchanged. The wrap carries position + trail sparks so
- * the star's clip-path cannot clip them. */
+ * the star's clip-path cannot clip them. It spans the whole track and moves
+ * by translateX (compositor-only, and % resolves against the track width);
+ * the star itself sits at the wrap's left edge, centered on x=0. */
 .knot-wrap {
   height: 13px;
-  left: 0;
+  left: -6.5px;
   pointer-events: none;
   position: absolute;
   top: -4px;
-  transition: left 520ms linear;
-  width: 13px;
+  transition: transform 520ms linear;
+  width: 100%;
 }
 
 /* Seeks, track changes, and drags move the star directly, with no easing. */
 .progress-track.progress-snap .progress-fill,
+.progress-track.progress-snap .progress-fill-river,
 .progress-track.progress-snap .knot-wrap,
 .progress-track.scrubbing .progress-fill,
+.progress-track.scrubbing .progress-fill-river,
 .progress-track.scrubbing .knot-wrap {
   transition: none;
 }

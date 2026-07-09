@@ -127,11 +127,18 @@
 }
 
 /* The dvh cap keeps the square art (and so the whole hero) inside short
- * viewports — the radio page must never need a scrollbar. */
+ * viewports — the radio page must never need a scrollbar. The aspect-ratio
+ * sits on the box itself, not just the cover inside it, so the square is
+ * reserved from first paint — the cover arriving after the data load must
+ * not shove the metadata down (that's a layout shift Lighthouse bills). */
 .hero-art-box {
   align-self: center;
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
   max-width: min(380px, 44dvh);
   position: relative;
+  width: 100%;
   z-index: 1;
 }
 
@@ -231,11 +238,14 @@
   overflow-wrap: anywhere;
 }
 
+/* Both lines are empty in the pre-data state; reserve their height so the
+ * loaded text doesn't push the actions/stations down (layout shift). */
 .hero-subtitle {
   color: var(--text-soft);
   font-size: 15px;
   font-weight: 500;
   margin: 0;
+  min-height: 1.45em;
 }
 
 .hero-source {
@@ -243,6 +253,7 @@
   font-size: 13px;
   font-weight: 500;
   margin: 0;
+  min-height: 1.45em;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;

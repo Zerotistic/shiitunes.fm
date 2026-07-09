@@ -18,11 +18,19 @@ export function createCover(track, size = "row") {
   const wrap = document.createElement("span");
   wrap.className = `cover-wrap cover-${size}`;
 
-  const sources = size === "hero" ? [track.thumbnailLarge, track.thumbnail] : [track.thumbnail];
+  /* Small covers render at 44-56px — mqdefault (320w) is already 3x their
+   * needs, and it's 16:9 like the VODs, so the square crop never catches
+   * hqdefault's 4:3 letterbox bars. hqdefault stays as the fallback. */
+  const sources = size === "hero"
+    ? [track.thumbnailLarge, track.thumbnail]
+    : [track.thumbnailSmall, track.thumbnail];
   const image = document.createElement("img");
   image.className = "cover-art";
   image.alt = "";
-  image.loading = "lazy";
+  /* The hero art is usually the page's LCP element and already sits at the
+   * end of a JS → data → render chain — don't also lazy-load it. */
+  image.loading = size === "hero" ? "eager" : "lazy";
+  if (size === "hero") image.setAttribute("fetchpriority", "high");
   image.decoding = "async";
 
   let sourceIndex = 0;

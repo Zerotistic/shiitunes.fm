@@ -51,6 +51,7 @@ export function initRender(userActions) {
   nodes.knotWrap = document.querySelector(".knot-wrap");
   nodes.nowCopy = document.querySelector(".now-copy");
   nodes.panelInfo = document.querySelector(".panel-info");
+  nodes.progressRiver = document.querySelector(".progress-fill-river");
   nodes.upNextList.addEventListener("scroll", syncQueueFade, { passive: true });
 }
 
@@ -229,9 +230,10 @@ export function renderHero() {
 
   replayTrackSwap("hero", track?.id ?? null, [nodes.heroArtBox, nodes.heroTitle, nodes.heroSubtitle, nodes.heroSource]);
   nodes.heroArtBox.innerHTML = "";
-  /* The card's blurred backdrop is the track's own cover art. */
+  /* The card's blurred backdrop is the track's own cover art. The small
+   * thumb: this is typically the LCP image, and the blur hides the pixels. */
   if (track) {
-    nodes.heroCard.style.setProperty("--hero-cover", `url("${track.thumbnail}")`);
+    nodes.heroCard.style.setProperty("--hero-cover", `url("${track.thumbnailSmall}")`);
   } else {
     nodes.heroCard.style.removeProperty("--hero-cover");
   }
@@ -631,9 +633,14 @@ export function setProgressRatio(ratio) {
   lastProgressRatio = clamped;
 
   const percent = `${clamped * 100}%`;
-  nodes.progressFill.style.width = percent;
-  /* Keep the knot (13px star) inside the track at both extremes. */
-  nodes.knotWrap.style.left = `clamp(0px, calc(${percent} - 6.5px), calc(100% - 13px))`;
+  /* Transform-only updates stay on the compositor. The fill is a full-width
+   * clip window scaled to the ratio; the river inside is counter-scaled so
+   * its star-dust never squashes (matching CSS in player.css). */
+  nodes.progressFill.style.transform = `scaleX(${clamped})`;
+  nodes.progressRiver.style.transform = clamped > 0.0001 ? `scaleX(${1 / clamped})` : "scaleX(1)";
+  /* Keep the knot (13px star) inside the track at both extremes. The wrap
+   * spans the track, so the translateX percentage is track-relative. */
+  nodes.knotWrap.style.transform = `translateX(clamp(6.5px, ${percent}, calc(100% - 6.5px)))`;
   nodes.progressTrack.setAttribute("aria-valuenow", String(Math.round(clamped * 100)));
 }
 

@@ -22,8 +22,11 @@ if [ -z "$current" ]; then
 fi
 next=$((current + 1))
 sed -i "s/^const DATA_VERSION = \"$current\";$/const DATA_VERSION = \"$next\";/" js/data.js
+# The head preload of tracks.json must carry the same version, or browsers
+# would download the index twice.
+sed -i "s|data/tracks.json?v=$current|data/tracks.json?v=$next|" index.html
 
-git add data/tracks.json js/data.js
+git add data/tracks.json js/data.js index.html
 git commit -m "Update tracks (data v$next)"
 git push
 echo "Published. Pages will redeploy shortly — check https://shiitunes.fm in a minute."

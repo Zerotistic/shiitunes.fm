@@ -35,9 +35,35 @@
   }
   </script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffc53d' d='M12 2.5l2.5 6.2 6.7.5-5.1 4.3 1.6 6.5-5.7-3.5-5.7 3.5 1.6-6.5-5.1-4.3 6.7-.5L12 2.5z'/%3E%3C/svg%3E">
-  <!-- Warm the TLS handshakes the player and thumbnails will need anyway. -->
-  <link rel="preconnect" href="https://www.youtube.com">
+  <!-- Warm the thumbnail host — covers render as soon as the data lands.
+       (No YouTube preconnect: the player only loads on first interaction,
+       long after a parse-time handshake would have gone stale.) -->
   <link rel="preconnect" href="https://i.ytimg.com">
+  <!-- Start the song index download during HTML parse instead of after the
+       module graph executes. The ?v= must equal DATA_VERSION in js/data.js —
+       publish-tracks.sh bumps both together. -->
+  <link rel="preload" href="./data/tracks.json?v=21" as="fetch" crossorigin>
+  <!-- The app is 17 ES modules with no bundler; without these hints the
+       browser discovers imports level by level (a waterfall that directly
+       delays first render). Keep this list in sync with js/*.js — internal
+       imports carry no ?v= stamp, only the app.js entry does. -->
+  <link rel="modulepreload" href="./js/app.js?v=49">
+  <link rel="modulepreload" href="./js/bindings.js">
+  <link rel="modulepreload" href="./js/collections.js">
+  <link rel="modulepreload" href="./js/components.js">
+  <link rel="modulepreload" href="./js/data.js">
+  <link rel="modulepreload" href="./js/dialogs.js">
+  <link rel="modulepreload" href="./js/menu.js">
+  <link rel="modulepreload" href="./js/playback.js">
+  <link rel="modulepreload" href="./js/player.js">
+  <link rel="modulepreload" href="./js/playlists.js">
+  <link rel="modulepreload" href="./js/queue.js">
+  <link rel="modulepreload" href="./js/render.js">
+  <link rel="modulepreload" href="./js/router.js">
+  <link rel="modulepreload" href="./js/state.js">
+  <link rel="modulepreload" href="./js/toast.js">
+  <link rel="modulepreload" href="./js/utils.js">
+  <link rel="modulepreload" href="./js/views.js">
   <!-- Self-hosted fonts render most of the UI; preloading kills the FOUT. -->
   <link rel="preload" href="./fonts/quicksand-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="./fonts/baloo2-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -45,13 +71,13 @@
        together on every web deploy; bump DATA_VERSION in js/data.js when
        data/tracks.json changes. Link order is load-bearing: later sheets
        override equal-specificity rules in earlier ones. -->
-  <link rel="stylesheet" href="./css/base.css?v=48">
-  <link rel="stylesheet" href="./css/views.css?v=48">
-  <link rel="stylesheet" href="./css/about.css?v=48">
-  <link rel="stylesheet" href="./css/player.css?v=48">
-  <link rel="stylesheet" href="./css/overlays.css?v=48">
-  <link rel="stylesheet" href="./css/responsive.css?v=48">
-  <link rel="stylesheet" href="./css/bee.css?v=48">
+  <link rel="stylesheet" href="./css/base.css?v=49">
+  <link rel="stylesheet" href="./css/views.css?v=49">
+  <link rel="stylesheet" href="./css/about.css?v=49">
+  <link rel="stylesheet" href="./css/player.css?v=49">
+  <link rel="stylesheet" href="./css/overlays.css?v=49">
+  <link rel="stylesheet" href="./css/responsive.css?v=49">
+  <link rel="stylesheet" href="./css/bee.css?v=49">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -511,7 +537,7 @@
           <span id="playerElapsed" class="duration-label">0:00</span>
           <div id="progressTrack" class="progress-track" role="slider" tabindex="0"
                aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-            <span id="progressFill" class="progress-fill"></span>
+            <span id="progressFill" class="progress-fill"><span class="progress-fill-river"></span></span>
             <span class="knot-wrap">
               <span class="thread-knot"></span>
               <span class="knot-spark"></span>
@@ -557,6 +583,6 @@
   </dialog>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="./js/app.js?v=48"></script>
+  <script type="module" src="./js/app.js?v=49"></script>
 </body>
 </html>

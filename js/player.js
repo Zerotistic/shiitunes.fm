@@ -85,7 +85,8 @@ function ensureYouTubeIframe(track) {
   const videoId = encodeURIComponent(track?.videoId || "");
   const params = youtubeIdentityParams();
   if (track?.startSeconds) params.set("start", String(track.startSeconds));
-  iframe.src = `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+  /* Privacy-enhanced host: no YouTube cookies until playback starts. */
+  iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
   existing?.replaceWith(iframe);
   return iframe;
 }

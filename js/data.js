@@ -95,7 +95,10 @@ export function enrichTrack(raw, index = 0) {
     untitled,
     haystack: [title, artist, source].join(" ").toLowerCase(),
     thumbnail: thumbUrl(videoId, "hqdefault"),
-    thumbnailLarge: thumbUrl(videoId, "maxresdefault")
+    thumbnailLarge: thumbUrl(videoId, "maxresdefault"),
+    /* For blurred backdrops only — the blur hides the resolution, and the
+     * hero backdrop is usually the page's LCP image, so smaller is faster. */
+    thumbnailSmall: thumbUrl(videoId, "mqdefault")
   };
 }
 

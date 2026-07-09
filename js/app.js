@@ -100,11 +100,24 @@ function handleTrackLink(params) {
   if (linkedId && state.tracks.length) {
     showToast("That shared song isn't in the library anymore", { error: true });
   }
-  /* Warm the YouTube API + player behind the panel overlay. Without this,
-   * the first song click has to bootstrap the whole iframe API before it
-   * can start — slow, and the click's autoplay grant can expire before
-   * loadVideoById runs, leaving the first selection stuck "loading". */
-  if (state.currentId) cueTrack(currentTrack());
+  /* Warm the YouTube API + player behind the panel overlay. Without a warm
+   * player, the first song click has to bootstrap the whole iframe API
+   * before it can start — slow, and the click's autoplay grant can expire
+   * before loadVideoById runs, leaving the first selection stuck "loading".
+   * Warming waits for the first touch of the page, though: at load it made
+   * every visitor (and Lighthouse) pay ~1.5 MB of player they might never
+   * use, and it still lands seconds before anyone picks a song. */
+  if (state.currentId) warmPlayerOnFirstInteraction();
+}
+
+function warmPlayerOnFirstInteraction() {
+  const warm = () => {
+    document.removeEventListener("pointerdown", warm);
+    document.removeEventListener("keydown", warm);
+    if (state.currentId) cueTrack(currentTrack());
+  };
+  document.addEventListener("pointerdown", warm, { passive: true });
+  document.addEventListener("keydown", warm);
 }
 
 /* Shared playlist links (?pl=): decode, confirm, save a copy. Asking first
