@@ -214,6 +214,22 @@ export async function cueTrack(track) {
   }
 }
 
+/* Selecting a track without playing (skip while paused) must still reach the
+ * player, or it keeps holding the previous video: the pane shows the wrong
+ * frame, and the next Play press goes through loadVideoById — which some
+ * platforms (iOS in particular) load without starting when the player sat
+ * paused. Cueing here means that Play press hits the reliable playVideo()
+ * path instead. Never boots the API: a cold player has nothing stale to fix.
+ * Returns true when it re-cued. */
+export function cueIfLoaded(track) {
+  if (!ytPlayer || !ytReady || !loadedTrack || loadedTrack.id === track.id) return false;
+  if (typeof ytPlayer.cueVideoById !== "function") return false;
+  stopProgressTimer();
+  loadedTrack = track;
+  ytPlayer.cueVideoById(playbackRequest(track));
+  return true;
+}
+
 /* Remembered before the player exists and applied on ready, so the saved
  * volume survives page loads. The iframe API caps at 100 — no boost. */
 export function setPlayerVolume(volume) {

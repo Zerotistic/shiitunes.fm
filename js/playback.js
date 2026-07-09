@@ -8,8 +8,8 @@ import {
 } from "./state.js";
 import { categoryStationId, contextTrackIds, rebuildPlayOrder } from "./queue.js";
 import {
-  configurePlayer, forgetLoadedTrack, pausePlayback, playTrack, playedSeconds,
-  seekWithin, setPlayerVolume
+  configurePlayer, cueIfLoaded, forgetLoadedTrack, pausePlayback, playTrack,
+  playedSeconds, seekWithin, setPlayerVolume
 } from "./player.js";
 import {
   nodes, performerLabel, renderHero, renderLibrary, renderPlayer,
@@ -58,7 +58,16 @@ export function selectTrack(trackId, { play = true, setContext, ephemeral = fals
   updateLibraryActiveRow();
   updateMediaSession(track);
   preloadUpcomingArt();
-  if (!play) return;
+  if (!play) {
+    /* Keep a warm player in step with the selection (see cueIfLoaded). The
+     * cue resets playback, so a stale "loading"/"playing" status would lie. */
+    if (cueIfLoaded(track) && state.playerStatus !== "idle") {
+      setPlayerStatus("paused");
+      renderPlayerState();
+      updateProgress({ elapsed: 0, duration: track.duration || null });
+    }
+    return;
+  }
   playCurrent();
 }
 
