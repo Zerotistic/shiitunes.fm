@@ -125,7 +125,7 @@ function warmPlayerOnFirstInteraction() {
 async function handlePlaylistLink(params) {
   const sharedParam = params.get("pl");
   if (!sharedParam || !state.tracks.length) return;
-  const shared = playlists.decodePlaylistShare(sharedParam);
+  const shared = await playlists.decodePlaylistShare(sharedParam);
   const known = shared ? shared.trackIds.filter((id) => state.trackById.has(id)) : [];
   if (!shared || !known.length) {
     showToast("That shared playlist link couldn't be read", { error: true });

@@ -59,19 +59,54 @@ test("migratePlaylists is a no-op when everything resolves", () => {
   assert.deepEqual(state.playlists.liked, ["vidAAA-120"]);
 });
 
-test("share link round-trips name and track ids, unicode included", () => {
+test("share link round-trips name and track ids, unicode included", async () => {
+  /* Odd-shaped ids (not 11-char videoIds) must fall back to the legacy
+   * encoding and still round-trip. */
   const playlist = { id: "p1", name: "夜のうた ✨ mix", trackIds: ["vidAAA-120", "vidBBB-40"] };
-  const encoded = encodePlaylistShare(playlist);
-  assert.match(encoded, /^[A-Za-z0-9_-]+$/, "must be URL-safe without escaping");
-  const decoded = decodePlaylistShare(encoded);
+  const encoded = await encodePlaylistShare(playlist);
+  assert.match(encoded, /^[A-Za-z0-9_-]+$/, "legacy fallback stays base64url");
+  const decoded = await decodePlaylistShare(encoded);
   assert.deepEqual(decoded, { name: "夜のうた ✨ mix", trackIds: ["vidAAA-120", "vidBBB-40"] });
 });
 
-test("decodePlaylistShare rejects garbage and empty payloads", () => {
-  assert.equal(decodePlaylistShare("not base64!!"), null);
-  assert.equal(decodePlaylistShare(""), null);
-  const empty = encodePlaylistShare({ name: "x", trackIds: [] });
-  assert.equal(decodePlaylistShare(empty), null);
+test("v2 share links round-trip real-shaped ids compactly", async () => {
+  const trackIds = ["9qfAZYrD4Ho-0", "IUivtbGznrw-1569", "_CVrdoZU8Zs-4410"];
+  const playlist = { id: "p1", name: "test ~ & 夜.mix", trackIds };
+  const encoded = await encodePlaylistShare(playlist);
+  assert.match(encoded, /^(2|z)~/, "compact ids use the v2/z format");
+  const decoded = await decodePlaylistShare(encoded);
+  assert.deepEqual(decoded, { name: "test ~ & 夜.mix", trackIds });
+  const legacyLength = (await encodePlaylistShare({ ...playlist, trackIds: ["x-1"] })).length;
+  assert.ok(legacyLength > 0); // sanity: legacy path still callable
+});
+
+test("v2 beats the legacy encoding on size for a large playlist", async () => {
+  const trackIds = Array.from({ length: 80 }, (_, i) => `9qfAZYrD4H${"abcdefgh"[i % 8]}-${i * 37}`);
+  const playlist = { id: "p1", name: "big mix", trackIds };
+  const encoded = await encodePlaylistShare(playlist);
+  const legacy = Buffer.from(JSON.stringify({ n: playlist.name, t: trackIds })).toString("base64url");
+  assert.ok(encoded.length < legacy.length * 0.75,
+    `expected ≥25% smaller: v2=${encoded.length} legacy=${legacy.length}`);
+  assert.deepEqual(await decodePlaylistShare(encoded), { name: "big mix", trackIds });
+});
+
+test("legacy base64-JSON links keep decoding (old shares must never break)", async () => {
+  /* A real pre-v2 link payload. */
+  const legacy = "eyJuIjoidGVzdCIsInQiOlsiX0NWcmRvWlU4WnMtMCIsIi1MU1hIT1lWVWRjLTE1NjkiLCJ5U1JxSERnVDlMdy0xMzQ0IiwicEJHMWVSUXVkYm8tNDQxMCJdfQ";
+  const decoded = await decodePlaylistShare(legacy);
+  assert.deepEqual(decoded, {
+    name: "test",
+    trackIds: ["_CVrdoZU8Zs-0", "-LSXHOYVUdc-1569", "ySRqHDgT9Lw-1344", "pBG1eRQudbo-4410"]
+  });
+});
+
+test("decodePlaylistShare rejects garbage and empty payloads", async () => {
+  assert.equal(await decodePlaylistShare("not base64!!"), null);
+  assert.equal(await decodePlaylistShare(""), null);
+  assert.equal(await decodePlaylistShare("2~name-without-tracks"), null);
+  assert.equal(await decodePlaylistShare("z~!!!"), null);
+  const empty = await encodePlaylistShare({ name: "x", trackIds: [] });
+  assert.equal(await decodePlaylistShare(empty), null);
 });
 
 test("renamePlaylist trims and refuses empty names", () => {

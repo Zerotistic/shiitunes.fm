@@ -1,5 +1,5 @@
 /* Service worker: instant shell for returning visitors and a working app
- * shell offline. Audio never lives here — playback is YouTube embeds and
+ * shell offline. Audio never lives here, playback is YouTube embeds and
  * simply requires being online.
  *
  * Caching contract (mirrors the ?v= convention in index.html):
@@ -19,14 +19,14 @@
 const ASSETS = [
   "./",
   "./index.html",
-  "./css/base.css?v=50",
-  "./css/views.css?v=50",
-  "./css/about.css?v=50",
-  "./css/player.css?v=50",
-  "./css/overlays.css?v=50",
-  "./css/responsive.css?v=50",
-  "./css/bee.css?v=50",
-  "./js/app.js?v=50",
+  "./css/base.css?v=51",
+  "./css/views.css?v=51",
+  "./css/about.css?v=51",
+  "./css/player.css?v=51",
+  "./css/overlays.css?v=51",
+  "./css/responsive.css?v=51",
+  "./css/bee.css?v=51",
+  "./js/app.js?v=51",
   "./js/bindings.js",
   "./js/collections.js",
   "./js/components.js",

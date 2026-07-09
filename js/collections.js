@@ -105,7 +105,7 @@ export function handleRenamePlaylist(playlistId) {
   input.select();
 }
 
-export function handleSharePlaylist(playlistId) {
+export async function handleSharePlaylist(playlistId) {
   const playlist = playlists.playlistById(playlistId);
   if (!playlist) return;
   if (!playlist.trackIds.length) {
@@ -115,7 +115,9 @@ export function handleSharePlaylist(playlistId) {
   const url = new URL(window.location.href);
   url.search = "";
   url.hash = "";
-  url.searchParams.set("pl", playlists.encodePlaylistShare(playlist));
+  /* The await is a local compression pass (milliseconds) — well inside the
+   * user-activation window the clipboard write needs. */
+  url.searchParams.set("pl", await playlists.encodePlaylistShare(playlist));
   copyText(url.toString(), "Share link copied — anyone can save this playlist");
 }
 
