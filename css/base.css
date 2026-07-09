@@ -227,6 +227,19 @@ svg {
   width: 14px;
 }
 
+/* One-shot entrance replayed by render.js on the hero, bottom player, and
+ * now-playing panel whenever the current track actually changes. */
+.track-swap {
+  animation: track-swap-in 260ms ease;
+}
+
+@keyframes track-swap-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
 .nav {
   display: grid;
   gap: 2px;

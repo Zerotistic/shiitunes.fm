@@ -283,6 +283,19 @@
   display: block;
 }
 
+/* The arriving glyph pops in when playback actually flips state (keyed off
+ * data-player-status so nothing pops on page load). */
+.app-shell.is-playing .hero-actions .pause-icon,
+.app-shell[data-player-status="paused"] .hero-actions .play-icon {
+  animation: icon-pop 200ms ease;
+}
+
+@keyframes icon-pop {
+  from {
+    transform: scale(0.5);
+  }
+}
+
 /* Quick stations: one-tap shuffle within a category. */
 .station-row {
   align-items: center;
@@ -677,6 +690,20 @@
   gap: 0;
 }
 
+/* Soft settle replayed by renderLibrary when the query, filter, sort, or
+ * playlist changes — not on "Show more". Starts at 0.4 opacity, not 0, so
+ * fast typing reads as a ripple rather than a flicker. */
+.library-rows.list-swap {
+  animation: list-swap-in 180ms ease;
+}
+
+@keyframes list-swap-in {
+  from {
+    opacity: 0.4;
+    transform: translateY(5px);
+  }
+}
+
 /* A continuous tracklist: flush rows over hairlines, with a hover highlight —
  * not 272 floating cards. */
 .library-row {
@@ -847,7 +874,7 @@
   display: inline-flex;
   height: var(--control-sm);
   justify-content: center;
-  transition: background 140ms ease, color 140ms ease, opacity 140ms ease;
+  transition: background 140ms ease, color 140ms ease, opacity 140ms ease, transform 120ms ease;
   width: var(--control-sm);
 }
 

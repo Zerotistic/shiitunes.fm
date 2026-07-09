@@ -81,7 +81,12 @@
   display: inline-flex;
   height: var(--control-sm);
   justify-content: center;
+  transition: color 140ms ease, transform 120ms ease;
   width: var(--control-sm);
+}
+
+.current-like:active {
+  transform: scale(0.86);
 }
 
 .current-like svg {
@@ -113,12 +118,17 @@
   height: var(--control-sm);
   justify-content: center;
   position: relative;
+  transition: color 140ms ease, transform 120ms ease;
   width: var(--control-sm);
 }
 
 .icon-button:hover,
 .icon-button.active {
   color: var(--amber);
+}
+
+.icon-button:active {
+  transform: scale(0.86);
 }
 
 .icon-button.repeat-one::after {
@@ -154,6 +164,7 @@
   height: 56px;
   justify-content: center;
   position: relative;
+  transition: transform 120ms ease;
   width: 56px;
 }
 
@@ -176,18 +187,30 @@
   background: var(--blue-soft);
 }
 
+/* Both glyphs stay stacked in the badge and crossfade with a quarter-turn
+ * on play/pause instead of hard-swapping via display. */
 .play-badge svg {
   height: 10px;
+  inset: 0;
+  margin: auto;
+  position: absolute;
+  transition: opacity 150ms ease, transform 150ms ease;
   width: 10px;
 }
 
-.play-button .pause-icon,
-.app-shell.is-playing .play-button .play-icon {
-  display: none;
+.play-badge .pause-icon {
+  opacity: 0;
+  transform: scale(0.4) rotate(-90deg);
 }
 
-.app-shell.is-playing .play-button .pause-icon {
-  display: block;
+.app-shell.is-playing .play-badge .pause-icon {
+  opacity: 1;
+  transform: none;
+}
+
+.app-shell.is-playing .play-badge .play-icon {
+  opacity: 0;
+  transform: scale(0.4) rotate(90deg);
 }
 
 .progress-row {
@@ -511,13 +534,17 @@
   display: inline-flex;
   height: 26px;
   justify-content: center;
-  transition: background 140ms ease, color 140ms ease;
+  transition: background 140ms ease, color 140ms ease, transform 120ms ease;
   width: 26px;
 }
 
 .panel-chrome-btn:hover {
   background: rgba(255, 255, 255, 0.13);
   color: var(--text);
+}
+
+.panel-chrome-btn:active {
+  transform: scale(0.9);
 }
 
 .panel-chrome-btn svg {

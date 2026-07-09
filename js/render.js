@@ -49,6 +49,8 @@ export function initRender(userActions) {
   });
   nodes.app = document.querySelector(".app-shell");
   nodes.knotWrap = document.querySelector(".knot-wrap");
+  nodes.nowCopy = document.querySelector(".now-copy");
+  nodes.panelInfo = document.querySelector(".panel-info");
   nodes.upNextList.addEventListener("scroll", syncQueueFade, { passive: true });
 }
 
@@ -184,6 +186,23 @@ function createPlayingBars() {
   return bars;
 }
 
+/* Replay the .track-swap entrance on a surface's text/art when its track
+ * actually changes. Keyed per surface: the hero can render later than the
+ * player (view switch, renderAll) and must not replay for a track it has
+ * already shown. The first render of a surface never animates — the page
+ * arrival is view-in's job. */
+const swapShown = new Map();
+
+function replayTrackSwap(surface, trackId, elements) {
+  const previous = swapShown.get(surface);
+  swapShown.set(surface, trackId);
+  if (previous === undefined || previous === trackId || !trackId) return;
+  const targets = elements.filter(Boolean);
+  targets.forEach((el) => el.classList.remove("track-swap"));
+  void targets[0]?.offsetWidth;
+  targets.forEach((el) => el.classList.add("track-swap"));
+}
+
 /* -------------------------------- sections ------------------------------- */
 
 export function renderSkeletons() {
@@ -208,6 +227,7 @@ export function renderBanner() {
 export function renderHero() {
   const track = currentTrack();
 
+  replayTrackSwap("hero", track?.id ?? null, [nodes.heroArtBox, nodes.heroTitle, nodes.heroSubtitle, nodes.heroSource]);
   nodes.heroArtBox.innerHTML = "";
   /* The card's blurred backdrop is the track's own cover art. */
   if (track) {
@@ -400,7 +420,19 @@ function renderLibraryRow(track, index) {
   return row;
 }
 
+/* Which query/filter/sort/playlist the list last showed. "Show more" and
+ * like-driven rebuilds keep the same context and must not replay the settle. */
+let lastLibraryContext;
+
 export function renderLibrary() {
+  const context = [state.activePlaylist, state.query.trim(), state.librarySort, state.libraryFilter].join(" ");
+  if (lastLibraryContext !== undefined && lastLibraryContext !== context) {
+    nodes.libraryRows.classList.remove("list-swap");
+    void nodes.libraryRows.offsetWidth;
+    nodes.libraryRows.classList.add("list-swap");
+  }
+  lastLibraryContext = context;
+
   withFocusRestore(() => {
     const playlist = state.activePlaylist ? playlistById(state.activePlaylist) : null;
     const tracks = libraryTracks();
@@ -514,6 +546,7 @@ export function renderPlayer() {
   const track = currentTrack();
   renderPlayerState();
 
+  replayTrackSwap("player", track?.id ?? null, [nodes.playerArtBox, nodes.nowCopy]);
   nodes.playerArtBox.innerHTML = "";
   if (!track) {
     nodes.playerTitle.textContent = state.dataStatus === "loading" ? "Loading ShiiTunes" : "No track selected";
@@ -551,6 +584,7 @@ function syncSeekable(track) {
  * the player module (iframe) plus the has-video class set on first playback. */
 function renderNowPanel(track) {
   syncPanelToggleButton();
+  replayTrackSwap("panel", track?.id ?? null, [nodes.panelInfo]);
   if (!track) {
     nodes.nowPanel.hidden = state.panelDismissed || !isPlaying();
     return;
