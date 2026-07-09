@@ -684,7 +684,8 @@ function likedStatLabel(count) {
 function renderAbout() {
   injectChibi();
   nodes.aboutLikedLabel.textContent = likedStatLabel(state.playlists.liked.length);
-  const streams = new Set(state.tracks.map((track) => track.source)).size;
+  /* Count videos, not source titles — two VODs can share a stream title. */
+  const streams = new Set(state.tracks.map((track) => track.videoId)).size;
   const hours = Math.round(state.tracks.reduce((sum, track) => sum + (track.duration || 0), 0) / 3600);
   const stats = [
     [nodes.aboutMoments, state.tracks.length],

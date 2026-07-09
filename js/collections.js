@@ -94,7 +94,8 @@ export function handleRenamePlaylist(playlistId) {
     onSubmit: (name) => {
       playlists.renamePlaylist(playlistId, name);
       renderAll(); // the name shows in the nav, library head, and toasts
-      showToast(`Renamed to "${name}"`);
+      /* Toast the stored name — the raw input may have collapsed whitespace. */
+      showToast(`Renamed to "${playlists.playlistById(playlistId).name}"`);
     },
     onCancel: () => renderPlaylistNav()
   });
@@ -133,7 +134,10 @@ export async function handleDeletePlaylist(playlistId) {
   playlists.deletePlaylist(playlistId);
   if (state.activePlaylist === playlistId) {
     state.activePlaylist = null;
-    navigate("library"); // drop the dead #/library/<id> from the URL
+    /* Only the library view carries the dead #/library/<id> hash. Deleting
+     * from elsewhere (sidebar right-click on the radio view) must not yank
+     * the person over to the library. */
+    if (state.activeView === "library") navigate("library");
   }
   if (state.playContext === playlistId) {
     state.playContext = null;

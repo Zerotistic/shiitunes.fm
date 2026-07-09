@@ -64,8 +64,9 @@ function createFallbackCover(track) {
   /* Seeded star-field variation so identical songs still look distinct. */
   fallback.dataset.variant = String(hashCode(track.id) % 4);
   /* Untitled songs get the star glyph — a letter would read as a title
-   * initial the track doesn't have. */
-  const first = track.untitled ? "" : cleanText(track.title)[0];
+   * initial the track doesn't have. Spread, not [0]: indexing a title that
+   * starts with an emoji would split the surrogate pair into mojibake. */
+  const first = track.untitled ? "" : [...cleanText(track.title)][0];
   fallback.textContent = first ? first.toUpperCase() : "✶";
   return fallback;
 }

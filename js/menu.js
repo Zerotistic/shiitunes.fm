@@ -102,6 +102,10 @@ function presentMenu(anchor, at = null) {
    * the menu it never actually moved. */
   const onReflow = (event) => {
     if (event.type === "scroll" && menuNode?.contains(event.target)) return;
+    /* Mobile keyboards can resize the window when the "New playlist" input
+     * gets focus — closing then would eat the menu (and the half-typed name)
+     * mid-keystroke. While focus is inside the menu, ride the resize out. */
+    if (event.type === "resize" && menuNode?.contains(document.activeElement)) return;
     closePlaylistMenu();
   };
   const armReflow = window.requestAnimationFrame(() => {
