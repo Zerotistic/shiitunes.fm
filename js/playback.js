@@ -171,7 +171,13 @@ function playFromManualQueue(play) {
   return false;
 }
 
-export function moveBy(delta, { play = isPlaying(), allowCurrent = true } = {}) {
+/* Skipping keeps the listening intent: playing OR still loading means the
+ * person was about to hear something, so the next track should play too.
+ * Only a genuinely paused/idle player skips silently. */
+export function moveBy(delta, {
+  play = isPlaying() || state.playerStatus === "loading",
+  allowCurrent = true
+} = {}) {
   if (delta > 0 && playFromManualQueue(play)) return;
   if (!state.playOrder.length) return;
   const length = state.playOrder.length;
@@ -192,22 +198,31 @@ export function moveBy(delta, { play = isPlaying(), allowCurrent = true } = {}) 
   showToast("No playable tracks — try Open YouTube", { error: true });
 }
 
+/* Coming to rest after ENDED. Forgetting the loaded track matters: playVideo
+ * on an ENDED player replays without re-arming endSeconds (the same hazard
+ * the repeat-one branch documents), so a later Play press could run past the
+ * moment into the rest of the VOD. A forgotten track forces playTrack down
+ * the fresh loadVideoById path, start and end intact. */
+function stopAtEnd() {
+  forgetLoadedTrack();
+  setPlayerStatus("idle");
+  renderPlayerState();
+}
+
 /* The YT ENDED event is the single auto-advance trigger. */
 function advanceAfterEnd() {
   /* "Stop after this song" wins over every advance path. */
   if (sleepSetting === "song") {
     sleepSetting = "off";
     syncSleepButton();
-    setPlayerStatus("idle");
-    renderPlayerState();
+    stopAtEnd();
     showToast("Sleep timer — good night");
     return;
   }
   const index = state.playOrder.indexOf(state.queueResumeId ?? state.currentId);
   const isLast = index === state.playOrder.length - 1;
   if (isLast && state.repeat === "off" && !state.manualQueue.length) {
-    setPlayerStatus("idle");
-    renderPlayerState();
+    stopAtEnd();
     renderUpNext();
     return;
   }
@@ -226,14 +241,23 @@ export function handlePrev() {
  * and start playing. */
 function startShuffleContext(context, toastMessage) {
   if (!state.tracks.length) return;
+  const previousContext = state.playContext;
+  const previousId = state.currentId;
+  const previousShuffle = state.shuffle;
   state.shuffle = true;
   state.playContext = context;
   state.currentId = null;
   rebuildPlayOrder();
   const firstPlayable = state.playOrder.find((id) => !isEmbedBlocked(id));
   if (!firstPlayable) {
-    state.playContext = null;
+    /* Full rollback: a nulled currentId would leave the shown track's play
+     * button a silent no-op, and a stuck-on shuffle would quietly reorder
+     * the old queue. */
+    state.playContext = previousContext;
+    state.currentId = previousId;
+    state.shuffle = previousShuffle;
     rebuildPlayOrder();
+    renderPlayerState();
     showToast("No playable tracks — try Open YouTube", { error: true });
     return;
   }

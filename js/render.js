@@ -617,6 +617,9 @@ export function updateProgress({ elapsed, duration }) {
     setProgressRatio(Math.min(1, elapsed / duration));
     nodes.progressTrack.setAttribute("aria-valuetext", `${formatClock(elapsed)} of ${formatClock(duration)}`);
   } else {
+    /* No known duration = no honest fill ratio. Pinning it to zero beats the
+     * alternative — inheriting whatever the previous song left behind. */
+    setProgressRatio(0);
     nodes.progressTrack.setAttribute("aria-valuetext", formatClock(elapsed));
   }
 }
