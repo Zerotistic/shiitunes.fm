@@ -171,6 +171,14 @@ async function init() {
     url.hash = window.location.hash;
     window.history.replaceState(null, "", url);
   }
+
+  /* Installable app + offline shell + instant repeat visits. Registered
+   * last: the first paint must never compete with sw.js precaching. */
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(() => {
+      /* No SW (old browser, private mode) just means no offline shell. */
+    });
+  }
 }
 
 init();
