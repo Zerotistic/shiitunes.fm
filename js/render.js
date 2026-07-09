@@ -86,7 +86,7 @@ export function performerLabel(track) {
   if (/shiina|amanogawa/i.test(track.artist)) return track.artist;
   if (track.category === "cover") return `Shiina Amanogawa · ${track.artist} cover`;
   if (track.category === "original") return track.artist;
-  return `Shiina Amanogawa · ${track.artist}`;
+  return `Shiina Amanogawa · orig. ${track.artist}`;
 }
 
 /* The one place the "<source> · <date>" line is assembled. */
