@@ -400,6 +400,16 @@ svg {
   position: relative;
 }
 
+/* Ultrawide screens: a working column past ~1700px is all eye travel — the
+ * hero stretches into a banner and library rows put half a meter between
+ * title and duration. Cap and center the column; laptops and FHD sit well
+ * under the cap and are untouched. */
+.main-shell > * {
+  margin-inline: auto;
+  max-width: 1720px;
+  width: 100%;
+}
+
 /* -------------------------------- header -------------------------------- */
 
 /* No border of its own: the search field's underline is the only line here —

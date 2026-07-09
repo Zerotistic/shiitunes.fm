@@ -28,6 +28,25 @@ with serve() as base, sync_playwright() as p:
             check(f"{view} no sideways scroll at {width}x{height}", sideways <= 0)
         page.close()
 
+    # Ultrawide: the working column caps at 1720px and centers instead of
+    # stretching the hero into a banner.
+    wide = browser.new_page(viewport={"width": 3440, "height": 1440})
+    wide.goto(base)
+    wide.wait_for_selector(".hero-card", timeout=10000)
+    wide.wait_for_timeout(400)
+    cap = wide.evaluate("""() => {
+      const view = document.querySelector('.view.active').getBoundingClientRect();
+      const shell = document.querySelector('.main-shell').getBoundingClientRect();
+      return { width: view.width, leftGap: view.left - shell.left,
+               rightGap: shell.right - view.right };
+    }""")
+    check(f"ultrawide caps content at 1720 ({cap['width']:.0f})", cap["width"] <= 1721)
+    check(f"ultrawide centers content (gaps {cap['leftGap']:.0f}/{cap['rightGap']:.0f})",
+          abs(cap["leftGap"] - cap["rightGap"]) <= 2)
+    check(f"ultrawide no sideways scroll", wide.evaluate(
+        "document.documentElement.scrollWidth - document.documentElement.clientWidth") <= 0)
+    wide.close()
+
     # Mobile sanity: the stacked layout must never scroll sideways, and the
     # About page shows its stats as a 2x2 grid.
     mobile = browser.new_context(
