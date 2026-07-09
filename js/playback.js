@@ -83,10 +83,10 @@ function preloadUpcomingArt() {
   const next = queuedNext || state.trackById.get(order[(index + 1) % order.length]);
   const after = state.trackById.get(order[(index + 2) % order.length]);
   if (next) {
-    new Image().src = next.thumbnail;
-    new Image().src = next.thumbnailLarge; // the hero's preferred size
+    new Image().src = next.thumbnailSmall; // rows, queue, player, hero backdrop
+    new Image().src = next.thumbnailLarge; // the hero art's preferred size
   }
-  if (after) new Image().src = after.thumbnail;
+  if (after) new Image().src = after.thumbnailSmall;
 }
 
 export async function playCurrent() {

@@ -19,14 +19,14 @@
 const ASSETS = [
   "./",
   "./index.html",
-  "./css/base.css?v=54",
-  "./css/views.css?v=54",
-  "./css/about.css?v=54",
-  "./css/player.css?v=54",
-  "./css/overlays.css?v=54",
-  "./css/responsive.css?v=54",
-  "./css/bee.css?v=54",
-  "./js/app.js?v=54",
+  "./css/base.css?v=55",
+  "./css/views.css?v=55",
+  "./css/about.css?v=55",
+  "./css/player.css?v=55",
+  "./css/overlays.css?v=55",
+  "./css/responsive.css?v=55",
+  "./css/bee.css?v=55",
+  "./js/app.js?v=55",
   "./js/bindings.js",
   "./js/collections.js",
   "./js/components.js",
@@ -73,7 +73,7 @@ self.addEventListener("activate", (event) => {
 
 /* Network-first: fresh wins, cache saves offline. Successful responses are
  * re-cached so unstamped files stay current for the next offline visit. */
-async function networkFirst(request, fallbackUrl = null) {
+async function networkFirst(request) {
   const cache = await caches.open(CACHE);
   try {
     const response = await fetch(request);
@@ -82,10 +82,22 @@ async function networkFirst(request, fallbackUrl = null) {
   } catch {
     const cached = await cache.match(request);
     if (cached) return cached;
-    if (fallbackUrl) {
-      const fallback = await cache.match(fallbackUrl);
-      if (fallback) return fallback;
-    }
+    throw new Error("offline and uncached");
+  }
+}
+
+/* Navigations all resolve to the one document. Caching them per visited URL
+ * would grow one stored index.html copy for every ?pl=/?t= link ever opened —
+ * store and serve under the single canonical key instead. */
+async function navigationFirst(request) {
+  const cache = await caches.open(CACHE);
+  try {
+    const response = await fetch(request);
+    if (response.ok) cache.put("./index.html", response.clone());
+    return response;
+  } catch {
+    const cached = await cache.match("./index.html");
+    if (cached) return cached;
     throw new Error("offline and uncached");
   }
 }
@@ -106,7 +118,7 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
-    event.respondWith(networkFirst(request, "./index.html"));
+    event.respondWith(navigationFirst(request));
     return;
   }
   if (url.search.includes("v=") || url.pathname.includes("/fonts/")) {
