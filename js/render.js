@@ -53,6 +53,17 @@ export function initRender(userActions) {
   nodes.panelInfo = document.querySelector(".panel-info");
   nodes.progressRiver = document.querySelector(".progress-fill-river");
   nodes.upNextList.addEventListener("scroll", syncQueueFade, { passive: true });
+  nodes.filterRow.addEventListener("scroll", syncFilterFade, { passive: true });
+  window.addEventListener("resize", syncFilterFade);
+}
+
+/* On phones the filter chips become a nowrap scroll strip; without a fade
+ * the clipped chip at the edge reads as a broken layout, not "scroll me".
+ * Same contract as the queue's edge fades. */
+function syncFilterFade() {
+  const row = nodes.filterRow;
+  row.classList.toggle("fade-left", row.scrollLeft > 4);
+  row.classList.toggle("fade-right", row.scrollLeft + row.clientWidth < row.scrollWidth - 4);
 }
 
 /* Re-rendering replaces the focused element; find its successor by key so
@@ -427,7 +438,7 @@ function renderLibraryRow(track, index) {
 let lastLibraryContext;
 
 export function renderLibrary() {
-  const context = [state.activePlaylist, state.query.trim(), state.librarySort, state.libraryFilter].join(" ");
+  const context = [state.activePlaylist, state.query.trim(), state.librarySort, state.libraryFilter].join("|");
   if (lastLibraryContext !== undefined && lastLibraryContext !== context) {
     nodes.libraryRows.classList.remove("list-swap");
     void nodes.libraryRows.offsetWidth;
@@ -450,6 +461,9 @@ export function renderLibrary() {
     syncSortChip(nodes.newestSortBtn, "newest", query);
     /* The Newest chip only exists once the index actually carries dates. */
     nodes.newestSortBtn.hidden = !state.hasDates;
+    /* Deferred a frame: on the first library render the view may still be
+     * display:none, where the row measures 0 wide and no fade would appear. */
+    window.requestAnimationFrame(syncFilterFade);
 
     const showingText = tracks.length > visibleTracks.length
       ? `Showing ${visibleTracks.length} of ${tracks.length}`

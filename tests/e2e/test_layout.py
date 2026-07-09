@@ -30,7 +30,9 @@ with serve() as base, sync_playwright() as p:
 
     # Mobile sanity: the stacked layout must never scroll sideways, and the
     # About page shows its stats as a 2x2 grid.
-    mobile = browser.new_page(viewport={"width": 390, "height": 844})
+    mobile = browser.new_context(
+        viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True
+    ).new_page()
     mobile.goto(base)
     mobile.wait_for_selector(".hero-card", timeout=10000)
     for view in VIEWS:
@@ -44,6 +46,31 @@ with serve() as base, sync_playwright() as p:
         "getComputedStyle(document.querySelector('.about-stats')).gridTemplateColumns.split(' ').length"
     )
     check(f"About stats are 2-across on mobile ({columns})", columns == 2)
+
+    # Filter strip: when the chips overflow on a phone, the right edge fades
+    # (scroll affordance) instead of hard-clipping a chip mid-letter.
+    mobile.get_by_role("button", name="Library").first.click()
+    mobile.wait_for_selector(".library-row")
+    mobile.wait_for_timeout(300)
+    fades = mobile.evaluate("""() => {
+      const row = document.getElementById('filterRow');
+      return { overflows: row.scrollWidth > row.clientWidth,
+               fadeRight: row.classList.contains('fade-right') };
+    }""")
+    check(f"filter strip fades when scrollable ({fades})",
+          not fades["overflows"] or fades["fadeRight"])
+
+    # Touch targets: the 28px transport buttons carry an invisible pad, so a
+    # tap just outside the visual bounds still lands on the button.
+    mobile.get_by_role("button", name="Radio").first.click()
+    mobile.wait_for_timeout(300)
+    # Probe above the button: sideways the neighbors' pads overlap by design.
+    padded = mobile.evaluate("""() => {
+      const btn = document.getElementById('nextBtn');
+      const r = btn.getBoundingClientRect();
+      return document.elementFromPoint(r.left + r.width / 2, r.top - 4) === btn;
+    }""")
+    check("transport buttons have expanded touch hit areas", padded)
     browser.close()
 
 finish()

@@ -2,7 +2,9 @@
 
 .bottom-player {
   align-items: center;
-  background: rgba(17, 19, 31, 0.98);
+  /* Fully opaque: views scroll beneath the fixed bar, and even 2% alpha lets
+   * bright content (amber pills, chips) ghost through readably. */
+  background: rgb(17, 19, 31);
   bottom: 0;
   box-shadow: 0 -10px 24px rgba(5, 6, 17, 0.3);
   display: grid;

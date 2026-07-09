@@ -480,6 +480,29 @@
   }
 }
 
+/* Touch devices: the small icon buttons render 26-34px, well under the
+ * ~44px touch guideline. An invisible inset pad grows the hit area without
+ * moving a pixel. ::before, not ::after — .repeat-one draws its badge there.
+ * Neighbors' pads overlap a little in tight rows; the later element wins the
+ * sliver, which still beats a dead gap. */
+@media (pointer: coarse) {
+  .icon-button,
+  .icon-action,
+  .panel-chrome-btn,
+  .current-like {
+    position: relative;
+  }
+
+  .icon-button::before,
+  .icon-action::before,
+  .panel-chrome-btn::before,
+  .current-like::before {
+    content: "";
+    inset: -6px;
+    position: absolute;
+  }
+}
+
 @media (max-width: 460px) {
   .main-shell,
   .sidebar {

@@ -607,6 +607,20 @@
   gap: 12px;
 }
 
+/* Edge fades for the phone scroll-strip variant — set by syncFilterFade
+ * (render.js) so a clipped chip reads as scrollable, not broken. */
+.filter-row.fade-right {
+  mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent 100%);
+}
+
+.filter-row.fade-left {
+  mask-image: linear-gradient(90deg, transparent 0, #000 28px);
+}
+
+.filter-row.fade-left.fade-right {
+  mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
+}
+
 .filter-chip {
   background: rgba(255, 255, 255, 0.05);
   border: 0;
