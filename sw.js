@@ -44,7 +44,7 @@ const ASSETS = [
   "./js/toast.js",
   "./js/utils.js",
   "./js/views.js",
-  "./data/tracks.json?v=21",
+  "./data/tracks.json?v=22",
   "./fonts/quicksand-latin.woff2",
   "./fonts/baloo2-latin.woff2",
   "./assets/chibi-concert.svg",
