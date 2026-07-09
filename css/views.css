@@ -325,10 +325,12 @@
   text-transform: uppercase;
 }
 
+/* Filled like the library's filter chips — layers separate by background,
+ * not borders. */
 .station-chip {
   align-items: center;
-  background: transparent;
-  border: 1px solid rgba(224, 223, 254, 0.22);
+  background: rgba(255, 255, 255, 0.05);
+  border: 0;
   border-radius: 8px;
   color: var(--iris-text);
   cursor: pointer;
@@ -337,12 +339,11 @@
   font-weight: 600;
   height: var(--control-sm);
   padding: 0 14px;
-  transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+  transition: color 140ms ease, background 140ms ease;
 }
 
 .station-chip:hover {
   background: var(--amber-soft);
-  border-color: var(--amber-line);
   color: var(--amber);
 }
 
@@ -639,17 +640,17 @@
   font-weight: 700;
 }
 
-/* Sort controls read differently from the filter chips on purpose: outlined,
- * not filled — they reorder the same set instead of narrowing it. */
 .sort-group {
   display: inline-flex;
   flex: 0 0 auto;
   gap: 8px;
 }
 
+/* Same fill language as the filter chips; the amber active state (vs the
+ * filters' iris) is what still says "reorders" rather than "narrows". */
 .sort-chip {
-  background: transparent;
-  border: 1px solid rgba(224, 223, 254, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+  border: 0;
   border-radius: 8px;
   color: var(--iris-text);
   cursor: pointer;
@@ -663,14 +664,12 @@
 
 .sort-chip.active {
   background: var(--amber-soft);
-  border-color: var(--amber-line);
   color: var(--amber);
   font-weight: 700;
 }
 
 /* Inert while a search query owns the ordering (relevance wins). */
 .sort-chip:disabled {
-  border-color: rgba(224, 223, 254, 0.12);
   color: var(--text-dim);
   cursor: not-allowed;
   opacity: 0.55;
@@ -1026,6 +1025,8 @@
 .play-button:active,
 .icon-action:active,
 .filter-chip:active,
+.station-chip:active,
+.sort-chip:active,
 .danger-button:active {
   transform: scale(0.96);
 }

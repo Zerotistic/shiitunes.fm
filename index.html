@@ -47,12 +47,12 @@
   <!-- Start the song index download during HTML parse instead of after the
        module graph executes. The ?v= must equal DATA_VERSION in js/data.js —
        publish-tracks.sh bumps both together. -->
-  <link rel="preload" href="./data/tracks.json?v=23" as="fetch" crossorigin>
+  <link rel="preload" href="./data/tracks.json?v=24" as="fetch" crossorigin>
   <!-- The app is 18 ES modules with no bundler; without these hints the
        browser discovers imports level by level (a waterfall that directly
        delays first render). Keep this list in sync with js/*.js — internal
        imports carry no ?v= stamp, only the app.js entry does. -->
-  <link rel="modulepreload" href="./js/app.js?v=58">
+  <link rel="modulepreload" href="./js/app.js?v=59">
   <link rel="modulepreload" href="./js/bindings.js">
   <link rel="modulepreload" href="./js/collections.js">
   <link rel="modulepreload" href="./js/components.js">
@@ -80,13 +80,13 @@
        load-bearing: later sheets override equal-specificity rules in earlier
        ones. -->
 
-  <link rel="stylesheet" href="./css/base.css?v=58">
-  <link rel="stylesheet" href="./css/views.css?v=58">
-  <link rel="stylesheet" href="./css/about.css?v=58">
-  <link rel="stylesheet" href="./css/player.css?v=58">
-  <link rel="stylesheet" href="./css/overlays.css?v=58">
-  <link rel="stylesheet" href="./css/responsive.css?v=58">
-  <link rel="stylesheet" href="./css/bee.css?v=58">
+  <link rel="stylesheet" href="./css/base.css?v=59">
+  <link rel="stylesheet" href="./css/views.css?v=59">
+  <link rel="stylesheet" href="./css/about.css?v=59">
+  <link rel="stylesheet" href="./css/player.css?v=59">
+  <link rel="stylesheet" href="./css/overlays.css?v=59">
+  <link rel="stylesheet" href="./css/responsive.css?v=59">
+  <link rel="stylesheet" href="./css/bee.css?v=59">
 </head>
 <body>
   <noscript>
@@ -591,6 +591,6 @@
   </dialog>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="./js/app.js?v=58"></script>
+  <script type="module" src="./js/app.js?v=59"></script>
 </body>
 </html>

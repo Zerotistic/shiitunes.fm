@@ -10,14 +10,14 @@
     "durationSeconds": 178
   },
   {
-    "id": "IUivtbGznrw-1",
+    "id": "IUivtbGznrw-0",
     "videoId": "IUivtbGznrw",
     "title": "君に夢中 / Kimi ni Muchuu",
     "artist": "Utada Hikaru",
     "source": "君に夢中『Kimi ni Muchuu』/ Utada Hikaru Cover by Shiina",
     "category": "cover",
-    "startSeconds": 1,
-    "durationSeconds": 241
+    "startSeconds": 0,
+    "durationSeconds": 263
   },
   {
     "id": "TYCUXNkPPAo-30",
@@ -593,34 +593,34 @@
     "durationSeconds": 243
   },
   {
-    "id": "J3z8UAp5Vb8-3000",
+    "id": "J3z8UAp5Vb8-2977",
     "videoId": "J3z8UAp5Vb8",
     "title": "Friday",
     "artist": "IU",
     "source": "Soft Bedroom Vibes Karaoke!",
     "category": "karaoke",
-    "startSeconds": 3000,
-    "durationSeconds": 164
+    "startSeconds": 2977,
+    "durationSeconds": 204
   },
   {
-    "id": "J3z8UAp5Vb8-4260",
+    "id": "J3z8UAp5Vb8-4202",
     "videoId": "J3z8UAp5Vb8",
     "title": "Like a Star",
     "artist": "Taeyeon",
     "source": "Soft Bedroom Vibes Karaoke!",
     "category": "karaoke",
-    "startSeconds": 4260,
-    "durationSeconds": 148
+    "startSeconds": 4202,
+    "durationSeconds": 209
   },
   {
-    "id": "J3z8UAp5Vb8-6256",
+    "id": "J3z8UAp5Vb8-6250",
     "videoId": "J3z8UAp5Vb8",
     "title": "Flowers",
     "artist": "",
     "source": "Soft Bedroom Vibes Karaoke!",
     "category": "karaoke",
-    "startSeconds": 6256,
-    "durationSeconds": 207
+    "startSeconds": 6250,
+    "durationSeconds": 213
   },
   {
     "id": "J3z8UAp5Vb8-7083",
@@ -633,24 +633,24 @@
     "durationSeconds": 205
   },
   {
-    "id": "JjaWwXzPOlk-601",
+    "id": "JjaWwXzPOlk-538",
     "videoId": "JjaWwXzPOlk",
     "title": "My Heart Will Go On",
     "artist": "",
     "source": "Sad Bee Sings Sad Songs",
     "category": "karaoke",
-    "startSeconds": 601,
-    "durationSeconds": 166
+    "startSeconds": 538,
+    "durationSeconds": 247
   },
   {
-    "id": "JjaWwXzPOlk-1128",
+    "id": "JjaWwXzPOlk-1108",
     "videoId": "JjaWwXzPOlk",
     "title": "A Thousand Years",
     "artist": "",
     "source": "Sad Bee Sings Sad Songs",
     "category": "karaoke",
-    "startSeconds": 1128,
-    "durationSeconds": 253
+    "startSeconds": 1108,
+    "durationSeconds": 272
   },
   {
     "id": "JjaWwXzPOlk-1880",
@@ -664,34 +664,34 @@
     "untitled": true
   },
   {
-    "id": "JjaWwXzPOlk-3365",
+    "id": "JjaWwXzPOlk-3362",
     "videoId": "JjaWwXzPOlk",
     "title": "Baby One More Time",
     "artist": "",
     "source": "Sad Bee Sings Sad Songs",
     "category": "karaoke",
-    "startSeconds": 3365,
-    "durationSeconds": 192
+    "startSeconds": 3362,
+    "durationSeconds": 199
   },
   {
-    "id": "JjaWwXzPOlk-3751",
+    "id": "JjaWwXzPOlk-3735",
     "videoId": "JjaWwXzPOlk",
     "title": "Oops I Did It Again",
     "artist": "",
     "source": "Sad Bee Sings Sad Songs",
     "category": "karaoke",
-    "startSeconds": 3751,
-    "durationSeconds": 196
+    "startSeconds": 3735,
+    "durationSeconds": 206
   },
   {
-    "id": "JjaWwXzPOlk-8357",
+    "id": "JjaWwXzPOlk-8356",
     "videoId": "JjaWwXzPOlk",
     "title": "Part of Your World",
     "artist": "",
     "source": "Sad Bee Sings Sad Songs",
     "category": "karaoke",
-    "startSeconds": 8357,
-    "durationSeconds": 151
+    "startSeconds": 8356,
+    "durationSeconds": 172
   },
   {
     "id": "JjaWwXzPOlk-8605",
@@ -824,24 +824,24 @@
     "durationSeconds": 201
   },
   {
-    "id": "Fy7ddrT2PGw-4975",
+    "id": "Fy7ddrT2PGw-4971",
     "videoId": "Fy7ddrT2PGw",
     "title": "Sakura",
     "artist": "Ikimono-gakari",
     "source": "Singing to You for a Mid-Week Boost!",
     "category": "karaoke",
-    "startSeconds": 4975,
-    "durationSeconds": 323
+    "startSeconds": 4971,
+    "durationSeconds": 339
   },
   {
-    "id": "Fy7ddrT2PGw-5358",
+    "id": "Fy7ddrT2PGw-5355",
     "videoId": "Fy7ddrT2PGw",
     "title": "Blue Bird",
     "artist": "Ikimono-gakari",
     "source": "Singing to You for a Mid-Week Boost!",
     "category": "karaoke",
-    "startSeconds": 5358,
-    "durationSeconds": 207
+    "startSeconds": 5355,
+    "durationSeconds": 210
   },
   {
     "id": "Fy7ddrT2PGw-5685",
@@ -872,7 +872,7 @@
     "source": "Singing to You for a Mid-Week Boost!",
     "category": "karaoke",
     "startSeconds": 6085,
-    "durationSeconds": 255
+    "durationSeconds": 261
   },
   {
     "id": "Fy7ddrT2PGw-6672",
@@ -885,23 +885,23 @@
     "durationSeconds": 236
   },
   {
-    "id": "Fy7ddrT2PGw-7528",
+    "id": "Fy7ddrT2PGw-7491",
     "videoId": "Fy7ddrT2PGw",
     "title": "Doraemon no Uta",
     "artist": "",
     "source": "Singing to You for a Mid-Week Boost!",
     "category": "karaoke",
-    "startSeconds": 7528,
-    "durationSeconds": 198
+    "startSeconds": 7491,
+    "durationSeconds": 172
   },
   {
-    "id": "Fy7ddrT2PGw-7734",
+    "id": "Fy7ddrT2PGw-7733",
     "videoId": "Fy7ddrT2PGw",
     "title": "Lemon",
     "artist": "Kenshi Yonezu",
     "source": "Singing to You for a Mid-Week Boost!",
     "category": "karaoke",
-    "startSeconds": 7734,
+    "startSeconds": 7733,
     "durationSeconds": 244
   },
   {
@@ -925,14 +925,14 @@
     "durationSeconds": 203
   },
   {
-    "id": "Fy7ddrT2PGw-10563",
+    "id": "Fy7ddrT2PGw-10547",
     "videoId": "Fy7ddrT2PGw",
     "title": "I Don't Wanna Be You Anymore",
     "artist": "Billie Eilish",
     "source": "Singing to You for a Mid-Week Boost!",
     "category": "karaoke",
-    "startSeconds": 10563,
-    "durationSeconds": 152
+    "startSeconds": 10547,
+    "durationSeconds": 197
   },
   {
     "id": "jNBSPs78owU-755",
