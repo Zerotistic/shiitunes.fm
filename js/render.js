@@ -42,7 +42,7 @@ export function initRender(userActions) {
     "nowPanel", "panelOverlay", "panelTitle", "panelArtist", "panelSource",
     "panelBlockedNote", "panelBlockedOpenBtn",
     "panelToggleBtn", "panelHideBtn",
-    "aboutMoments", "aboutStreams", "aboutLiked", "aboutLikedLabel", "toast"
+    "aboutMoments", "aboutStreams", "aboutHours", "aboutLiked", "aboutLikedLabel", "toast"
   ];
   ids.forEach((id) => {
     nodes[id] = document.getElementById(id);
@@ -641,9 +641,11 @@ function renderAbout() {
   injectChibi();
   nodes.aboutLikedLabel.textContent = likedStatLabel(state.playlists.liked.length);
   const streams = new Set(state.tracks.map((track) => track.source)).size;
+  const hours = Math.round(state.tracks.reduce((sum, track) => sum + (track.duration || 0), 0) / 3600);
   const stats = [
     [nodes.aboutMoments, state.tracks.length],
     [nodes.aboutStreams, streams],
+    [nodes.aboutHours, hours],
     [nodes.aboutLiked, state.playlists.liked.length]
   ];
   const animate = !aboutHasCounted

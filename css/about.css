@@ -372,14 +372,14 @@
   max-width: 58ch;
 }
 
-/* Always exactly three across — flex-wrap let the third card fall to its
+/* Always exactly four across — flex-wrap let the last card fall to its
  * own row (and stretch) whenever the column came up a few px short. */
 .about-stats {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   margin-top: 6px;
-  max-width: 520px;
+  max-width: 640px;
 }
 
 .about-stat {
@@ -603,8 +603,12 @@
     max-width: 185px;
   }
 
+  .about-stats {
+    gap: 8px;
+  }
+
   .about-stat {
-    padding: 8px 12px;
+    padding: 7px 10px;
   }
 
   .about-hero-copy h2 {
@@ -617,6 +621,10 @@
 
   .stat-number {
     font-size: 20px;
+  }
+
+  .stat-label {
+    font-size: 11px;
   }
 
   .about-card {
