@@ -1,0 +1,20 @@
+/* TEAM */
+  Charted, built, and kept in tune by fans of Amanogawa Shiina.
+  Contact: https://twitter.com/gegrgtezrze
+
+/* THANKS */
+  Shiina Amanogawa for every one of these songs.
+    https://www.youtube.com/channel/UCnJNNk45O1QYS2oMRYFKSyw
+  Every Butter Cookie who spotted a wrong title, a missing song,
+    or a timestamp that drifted. The map is yours too.
+
+/* SITE */
+  No framework, no build step, no trackers, no accounts.
+  HTML, CSS, and ES modules. View source, it's all there.
+  Nothing hosted here: every play is a YouTube embed of the
+    original VOD, so watch time lands where it belongs.
+
+                       ✦
+                  every time
+               Shiina sings,
+                 it's here

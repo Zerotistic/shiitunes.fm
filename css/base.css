@@ -96,6 +96,36 @@ body {
   font-family: "Quicksand", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+/* The theme holds even when you grab the text — browser-default blue
+ * selection on a night sky reads as a crack in the paint. */
+::selection {
+  background: var(--amber);
+  color: var(--amber-text);
+}
+
+/* JS-off visitors get a sentence, not a blank night sky. Hidden by default:
+ * the note only exists inside <noscript>. */
+.noscript-note {
+  background: var(--panel-strong);
+  border: 1px solid var(--amber-line);
+  border-radius: var(--radius-md);
+  color: var(--iris-text);
+  font-size: 14px;
+  left: 50%;
+  max-width: 420px;
+  padding: 18px 22px;
+  position: fixed;
+  text-align: center;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 32px);
+  z-index: 99;
+}
+
+.noscript-note a {
+  color: var(--amber);
+}
+
 button,
 input,
 select {
@@ -225,6 +255,28 @@ svg {
 .brand-star svg {
   height: 14px;
   width: 14px;
+}
+
+/* Two days a year (soul.js sets body[data-celebration]) the brand star gets
+ * to shimmer through party colors instead of plain amber. */
+body[data-celebration] .brand-star {
+  animation: star-twinkle 3.2s ease-in-out infinite, star-party 6s linear infinite;
+}
+
+@keyframes star-party {
+  0%,
+  100% {
+    color: var(--amber);
+  }
+  25% {
+    color: #ff9ec4;
+  }
+  50% {
+    color: #9fd0f7;
+  }
+  75% {
+    color: #b9f7c8;
+  }
 }
 
 /* One-shot entrance replayed by render.js on the hero, bottom player, and

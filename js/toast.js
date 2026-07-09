@@ -6,12 +6,17 @@ const ERROR_MS = 4200;
 
 let toastTimer = null;
 
-export function showToast(message, { error = false } = {}) {
+export function showToast(message, { error = false, celebrate = false } = {}) {
   const toast = document.getElementById("toast");
   if (!toast) return;
   window.clearTimeout(toastTimer);
   toast.textContent = message;
   toast.classList.toggle("error", error);
+  toast.classList.toggle("celebrate", celebrate);
   toast.classList.add("show");
-  toastTimer = window.setTimeout(() => toast.classList.remove("show"), error ? ERROR_MS : INFO_MS);
+  /* Celebrations linger like errors — you read them once a year. */
+  toastTimer = window.setTimeout(
+    () => toast.classList.remove("show"),
+    error || celebrate ? ERROR_MS : INFO_MS
+  );
 }

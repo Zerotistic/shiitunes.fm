@@ -39,6 +39,7 @@
        init). iOS reads the touch icon from here, not the manifest. -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/icon-192.png">
+  <link rel="author" type="text/plain" href="./humans.txt">
   <!-- Warm the thumbnail host — covers render as soon as the data lands.
        (No YouTube preconnect: the player only loads on first interaction,
        long after a parse-time handshake would have gone stale.) -->
@@ -47,11 +48,11 @@
        module graph executes. The ?v= must equal DATA_VERSION in js/data.js —
        publish-tracks.sh bumps both together. -->
   <link rel="preload" href="./data/tracks.json?v=21" as="fetch" crossorigin>
-  <!-- The app is 17 ES modules with no bundler; without these hints the
+  <!-- The app is 18 ES modules with no bundler; without these hints the
        browser discovers imports level by level (a waterfall that directly
        delays first render). Keep this list in sync with js/*.js — internal
        imports carry no ?v= stamp, only the app.js entry does. -->
-  <link rel="modulepreload" href="./js/app.js?v=57">
+  <link rel="modulepreload" href="./js/app.js?v=58">
   <link rel="modulepreload" href="./js/bindings.js">
   <link rel="modulepreload" href="./js/collections.js">
   <link rel="modulepreload" href="./js/components.js">
@@ -64,6 +65,7 @@
   <link rel="modulepreload" href="./js/queue.js">
   <link rel="modulepreload" href="./js/render.js">
   <link rel="modulepreload" href="./js/router.js">
+  <link rel="modulepreload" href="./js/soul.js">
   <link rel="modulepreload" href="./js/state.js">
   <link rel="modulepreload" href="./js/toast.js">
   <link rel="modulepreload" href="./js/utils.js">
@@ -78,15 +80,18 @@
        load-bearing: later sheets override equal-specificity rules in earlier
        ones. -->
 
-  <link rel="stylesheet" href="./css/base.css?v=57">
-  <link rel="stylesheet" href="./css/views.css?v=57">
-  <link rel="stylesheet" href="./css/about.css?v=57">
-  <link rel="stylesheet" href="./css/player.css?v=57">
-  <link rel="stylesheet" href="./css/overlays.css?v=57">
-  <link rel="stylesheet" href="./css/responsive.css?v=57">
-  <link rel="stylesheet" href="./css/bee.css?v=57">
+  <link rel="stylesheet" href="./css/base.css?v=58">
+  <link rel="stylesheet" href="./css/views.css?v=58">
+  <link rel="stylesheet" href="./css/about.css?v=58">
+  <link rel="stylesheet" href="./css/player.css?v=58">
+  <link rel="stylesheet" href="./css/overlays.css?v=58">
+  <link rel="stylesheet" href="./css/responsive.css?v=58">
+  <link rel="stylesheet" href="./css/bee.css?v=58">
 </head>
 <body>
+  <noscript>
+    <div class="noscript-note">ShiiTunes needs JavaScript to tune in — nothing here plays without it. The songs themselves live on <a href="https://www.youtube.com/channel/UCnJNNk45O1QYS2oMRYFKSyw" rel="noopener noreferrer">Shiina's channel</a>.</div>
+  </noscript>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <svg class="icon-sprite" aria-hidden="true">
@@ -590,6 +595,6 @@
   </dialog>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="./js/app.js?v=57"></script>
+  <script type="module" src="./js/app.js?v=58"></script>
 </body>
 </html>

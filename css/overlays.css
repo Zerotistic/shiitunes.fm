@@ -330,3 +330,10 @@
   color: #ffd3dd;
 }
 
+/* Milestones and celebration days: same toast, dressed up. */
+.toast.celebrate {
+  background: linear-gradient(120deg, rgba(64, 52, 22, 0.97), rgba(52, 40, 88, 0.97));
+  border: 1px solid var(--amber-line);
+  color: #ffe9b8;
+}
+

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lost in space — ShiiTunes</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#11131f">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffc53d' d='M12 2.5l2.5 6.2 6.7.5-5.1 4.3 1.6 6.5-5.7-3.5-5.7 3.5 1.6-6.5-5.1-4.3 6.7-.5L12 2.5z'/%3E%3C/svg%3E">
+  <!-- Self-contained on purpose: GitHub Pages serves this for ANY unknown
+       path, so relative asset URLs would break. Fonts load from the root;
+       everything else is inline. -->
+  <style>
+    @font-face {
+      font-family: "Baloo 2";
+      font-style: normal;
+      font-weight: 700 800;
+      font-display: swap;
+      src: url("/fonts/baloo2-latin.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: "Quicksand";
+      font-style: normal;
+      font-weight: 500 700;
+      font-display: swap;
+      src: url("/fonts/quicksand-latin.woff2") format("woff2");
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 20px 18px, rgba(255, 255, 255, 0.12) 1px, transparent 1.5px),
+        radial-gradient(circle at 84px 56px, rgba(255, 197, 61, 0.15) 1px, transparent 1.5px),
+        linear-gradient(180deg, #11131f 0%, #0b0d18 100%);
+      background-size: 140px 110px, 220px 180px, auto;
+      color: #f4f2ff;
+      font-family: "Quicksand", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 440px;
+    }
+
+    .lost-star {
+      color: #ffc53d;
+      filter: drop-shadow(0 0 18px rgba(255, 197, 61, 0.4));
+      animation: drift 5s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    .lost-star svg {
+      display: block;
+      height: 64px;
+      width: 64px;
+    }
+
+    @keyframes drift {
+      0%,
+      100% {
+        transform: translateY(0) rotate(-6deg);
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(-10px) rotate(6deg);
+        opacity: 0.7;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .lost-star {
+        animation: none;
+      }
+    }
+
+    h1 {
+      font-family: "Baloo 2", "Quicksand", sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin: 20px 0 10px;
+    }
+
+    p {
+      color: rgba(224, 223, 254, 0.84);
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0 0 26px;
+    }
+
+    .home-link {
+      background: #ffc53d;
+      border-radius: 999px;
+      color: #16120c;
+      display: inline-block;
+      font-weight: 700;
+      padding: 12px 26px;
+      text-decoration: none;
+    }
+
+    .home-link:hover {
+      filter: brightness(1.08);
+    }
+
+    .channel-link {
+      color: rgba(224, 223, 254, 0.72);
+      display: block;
+      font-size: 13px;
+      margin-top: 18px;
+    }
+
+    .channel-link a {
+      color: #ffc53d;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <span class="lost-star" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.5l2.5 6.2 6.7.5-5.1 4.3 1.6 6.5-5.7-3.5-5.7 3.5 1.6-6.5-5.1-4.3 6.7-.5L12 2.5z"/></svg>
+    </span>
+    <h1>This star isn't on the map.</h1>
+    <p>The page you were tuning to drifted out of the charted sky — or was never there. The radio, though, is right where you left it.</p>
+    <a class="home-link" href="/">Back to the radio</a>
+    <span class="channel-link">Or go straight to the source: <a href="https://www.youtube.com/channel/UCnJNNk45O1QYS2oMRYFKSyw" rel="noopener noreferrer">Shiina on YouTube</a></span>
+  </main>
+</body>
+</html>

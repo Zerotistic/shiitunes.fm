@@ -9,6 +9,7 @@ import { LIBRARY_PAGE_SIZE, LIKED_ID, currentTrack, isEmbedBlocked, isPlaying, s
 import { allPlaylists, isLiked, playlistById } from "./playlists.js";
 import { libraryTracks, upNextTracks } from "./queue.js";
 import { formatClock, hasCJK } from "./utils.js";
+import { syncTabTitle } from "./soul.js";
 
 const SKELETON_ROWS = 8;
 
@@ -86,7 +87,8 @@ function withFocusRestore(rerender, fallbackSelector = null) {
 
 function playerStatusLabel() {
   if (state.playerStatus === "loading") return "Tuning in";
-  if (state.playerStatus === "playing") return "On air";
+  /* On the two days a year worth noticing, the chip notices. */
+  if (state.playerStatus === "playing") return document.body.dataset.celebration ? "On air ✦" : "On air";
   if (state.playerStatus === "paused") return "Paused";
   if (state.playerStatus === "error") return "YouTube only";
   return "Ready";
@@ -279,6 +281,8 @@ export function renderPlayerState() {
   nodes.app.classList.toggle("is-playing", isPlaying());
   nodes.app.classList.toggle("is-loading", state.playerStatus === "loading");
   nodes.app.dataset.playerStatus = state.playerStatus;
+  /* The tab bar is a rendering surface too: title + favicon track playback. */
+  syncTabTitle();
 
   nodes.onAirText.textContent = currentTrack() ? playerStatusLabel() : "Off air";
   nodes.onAirChip.classList.toggle("live", isPlaying());

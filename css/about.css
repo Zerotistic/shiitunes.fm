@@ -265,6 +265,23 @@
   position: absolute;
 }
 
+/* Celebration days: the stage sparkles trade uniform amber for confetti.
+ * Colors only — the twinkle keeps its usual rhythm. */
+body[data-celebration] .sparkle-1,
+body[data-celebration] .sparkle-5 {
+  color: #ff9ec4;
+}
+
+body[data-celebration] .sparkle-2,
+body[data-celebration] .sparkle-6 {
+  color: #9fd0f7;
+}
+
+body[data-celebration] .sparkle-3,
+body[data-celebration] .sparkle-7 {
+  color: #b9f7c8;
+}
+
 .about-sparkle svg {
   animation: star-twinkle 3.2s ease-in-out infinite;
   height: 100%;

@@ -12,6 +12,7 @@ import { burstHearts, dropRiverStar, inlineNameForm } from "./components.js";
 import { closePlaylistMenu } from "./menu.js";
 import { confirmDanger } from "./dialogs.js";
 import { showToast } from "./toast.js";
+import { firstPlaylistMilestone, likeMilestone } from "./soul.js";
 import { navigate } from "./router.js";
 import { applyView } from "./views.js";
 import { queueLast, queueNext } from "./playback.js";
@@ -38,7 +39,13 @@ export function handleToggleLiked(trackId, sourceButton = null) {
   }
   syncHeartsFor(trackId);
   syncAfterMembershipChange(LIKED_ID);
-  showToast(nowLiked ? "Saved to Liked Songs" : "Removed from Liked Songs");
+  /* One-time moments get one-time copy: the 1st like and the 500th should
+   * not produce identical output. */
+  const milestone = nowLiked
+    ? likeMilestone(state.playlists.liked.length, state.tracks.length)
+    : null;
+  if (milestone) showToast(milestone, { celebrate: true });
+  else showToast(nowLiked ? "Saved to Liked Songs" : "Removed from Liked Songs");
 }
 
 function handleToggleInPlaylist(playlistId, track) {
@@ -52,7 +59,11 @@ function handleToggleInPlaylist(playlistId, track) {
 function handleCreatePlaylist(name, track = null) {
   const playlist = playlists.createPlaylist(name, track ? [track.id] : []);
   if (!playlist) return null;
-  showToast(track ? `Added to ${playlist.name}` : `Created "${playlist.name}"`);
+  if (firstPlaylistMilestone(state.playlists.custom.length)) {
+    showToast(`Created "${playlist.name}" — your first playlist ✦`, { celebrate: true });
+  } else {
+    showToast(track ? `Added to ${playlist.name}` : `Created "${playlist.name}"`);
+  }
   renderPlaylistNav();
   return playlist;
 }

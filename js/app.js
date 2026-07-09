@@ -30,6 +30,7 @@ import {
 import { confirmDanger } from "./dialogs.js";
 import { bindEvents } from "./bindings.js";
 import { showToast } from "./toast.js";
+import { applyCelebration, greetConsole } from "./soul.js";
 
 async function loadData() {
   state.dataStatus = "loading";
@@ -146,6 +147,8 @@ async function handlePlaylistLink(params) {
 }
 
 async function init() {
+  greetConsole();
+  applyCelebration();
   state.playlists = playlists.loadPlaylists();
   initRender(renderActions);
   bindEvents({ onRetryData: () => loadData() });
