@@ -138,6 +138,10 @@ export function libraryTracks() {
       .filter((track) => matchesFilter(track, playlist ? "all" : state.libraryFilter));
   }
 
-  if (!playlist) tracks = tracks.filter((track) => matchesFilter(track, state.libraryFilter));
+  /* Sort/filter chips render hidden for playlists (render.js) — a leftover
+   * A-Z/Newest sort from a prior full-library visit must not silently
+   * reorder a playlist's own track order. */
+  if (playlist) return tracks;
+  tracks = tracks.filter((track) => matchesFilter(track, state.libraryFilter));
   return sortTracks(tracks);
 }
