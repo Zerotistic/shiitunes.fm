@@ -16,6 +16,14 @@ let progressTimer = null;
 let loadedTrack = null;
 let loadedAt = 0;
 let desiredVolume = null;
+/* Bumped by anything that supersedes an in-flight playTrack() — a pause, a
+ * newer play/cue request. playTrack() reads this back after its `await` and
+ * bails if it's no longer current, instead of blindly issuing loadVideoById/
+ * playVideo on a request the user has already moved on from (e.g. hitting
+ * Pause while a slow/cold-boot load is still in flight — the pause would
+ * otherwise land first and then get silently overridden once the stale
+ * playTrack() finally resolves and autoplays anyway). */
+let playToken = 0;
 /* A play intent not yet confirmed by a PLAYING event. If the player comes to
  * rest CUED instead (an autoplay attempt the browser swallowed), one nudge
  * gets it moving — see handlePlayerState. */
@@ -234,9 +242,13 @@ export async function playTrack(track) {
    * huge bogus elapsed, and end-guards the new track before it even starts.
    * That was the "skip lands, then instantly skips again" bug. */
   stopProgressTimer();
+  const token = (playToken += 1);
   try {
     pendingPlay = true;
     const player = await loadYouTubeApi(track, { autoplay: true });
+    /* Superseded while awaiting the API (e.g. the user paused, or skipped
+     * again, before this request's load ever landed) — do not resurrect it. */
+    if (token !== playToken) return false;
     if (loadedTrack?.id !== track.id) {
       loadedTrack = track;
       loadedAt = Date.now();
@@ -255,6 +267,7 @@ export async function playTrack(track) {
 
 export async function cueTrack(track) {
   const request = playbackRequest(track);
+  playToken += 1; // supersede any in-flight playTrack — cueing means "don't play"
   try {
     pendingPlay = false;
     const player = await loadYouTubeApi(track);
@@ -281,6 +294,7 @@ export async function cueTrack(track) {
 export function cueIfLoaded(track) {
   if (!ytPlayer || !ytReady || !loadedTrack || loadedTrack.id === track.id) return false;
   if (typeof ytPlayer.cueVideoById !== "function") return false;
+  playToken += 1; // supersede any in-flight playTrack — cueing means "don't play"
   stopProgressTimer();
   loadedTrack = track;
   loadedAt = Date.now();
@@ -298,6 +312,11 @@ export function setPlayerVolume(volume) {
 }
 
 export function pausePlayback() {
+  /* Supersede any in-flight playTrack() — without this, pausing during a
+   * slow/cold-boot load (playerStatus "loading") could get silently
+   * overridden once that stale request finally resolves and autoplays. */
+  playToken += 1;
+  pendingPlay = false;
   stopProgressTimer();
   if (ytPlayer && ytReady && typeof ytPlayer.pauseVideo === "function") {
     ytPlayer.pauseVideo();
@@ -308,6 +327,15 @@ export function playedSeconds() {
   if (!loadedTrack || !ytPlayer || !ytReady) return 0;
   if (typeof ytPlayer.getCurrentTime !== "function") return 0;
   return Math.max(0, Number(ytPlayer.getCurrentTime() || 0) - (loadedTrack.startSeconds || 0));
+}
+
+/* False for a beat after any load — see END_GUARD_ARM_DELAY_MS below.
+ * getCurrentTime() (and so playedSeconds()) can't be trusted in that window,
+ * so callers that make decisions off playedSeconds() (restart-vs-previous,
+ * arrow-key seeking) should treat "not armed" as "nothing reliable to read
+ * yet" rather than acting on a stale number. */
+export function isPlaybackStable() {
+  return Date.now() - loadedAt > END_GUARD_ARM_DELAY_MS;
 }
 
 /* Seek within the loaded moment. `commit: false` scrubs without letting the

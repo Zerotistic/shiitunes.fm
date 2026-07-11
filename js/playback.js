@@ -8,8 +8,8 @@ import {
 } from "./state.js";
 import { categoryStationId, contextTrackIds, rebuildPlayOrder } from "./queue.js";
 import {
-  configurePlayer, cueIfLoaded, forgetLoadedTrack, pausePlayback, playTrack,
-  playedSeconds, seekWithin, setPlayerVolume
+  configurePlayer, cueIfLoaded, forgetLoadedTrack, isPlaybackStable, pausePlayback,
+  playTrack, playedSeconds, seekWithin, setPlayerVolume
 } from "./player.js";
 import {
   nodes, performerLabel, renderHero, renderLibrary, renderPlayer,
@@ -230,7 +230,14 @@ function advanceAfterEnd() {
 }
 
 export function handlePrev() {
-  if (playedSeconds() > PREV_RESTART_SECONDS) {
+  /* getCurrentTime() briefly still reports the outgoing track's position
+   * right after a skip (worst when the next track shares a videoId — an
+   * in-place seek, not a reload). Trusting playedSeconds() in that window
+   * could read a stale "well into the song" value for a track that just
+   * started, turning a second consecutive Previous press into "restart the
+   * current song" instead of "go back a track". Treat not-yet-stable the
+   * same as "just started" — go back. */
+  if (isPlaybackStable() && playedSeconds() > PREV_RESTART_SECONDS) {
     seekWithin(0);
     return;
   }

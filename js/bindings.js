@@ -3,7 +3,7 @@
 
 import { LIBRARY_PAGE_SIZE, currentTrack, isPlaying, state } from "./state.js";
 import { makeAppUrl } from "./data.js";
-import { loadedTrackId, playedSeconds, seekWithin } from "./player.js";
+import { isPlaybackStable, loadedTrackId, playedSeconds, seekWithin } from "./player.js";
 import { nodes, renderLibrary } from "./render.js";
 import { closePlaylistMenu, openContextMenu, openPlaylistMenu, openTrackMenu } from "./menu.js";
 import { applyView, clearSearch, setSearchQuery } from "./views.js";
@@ -235,6 +235,11 @@ function bindSeekBar() {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
     event.preventDefault();
     event.stopPropagation();
+    /* getCurrentTime() can still be settling right after a skip (see
+     * isPlaybackStable) — nudging off a stale playedSeconds() could seek to
+     * the wrong offset in the new track entirely. Wait it out rather than
+     * act on a number that isn't trustworthy yet. */
+    if (!isPlaybackStable()) return;
     const delta = event.key === "ArrowLeft" ? -SEEK_STEP_SECONDS : SEEK_STEP_SECONDS;
     seekWithin(playedSeconds() + delta);
   });
