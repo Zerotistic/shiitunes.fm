@@ -153,10 +153,27 @@ async function handlePlaylistLink(params) {
   showToast(`Saved "${playlist.name}"`);
 }
 
+/* Likes/playlists are last-write-wins localStorage with no merge — a second
+ * tab open at the same time only ever had the state from its own load, so
+ * saving there (e.g. liking a different song) overwrites whatever the first
+ * tab wrote, silently losing it. `storage` only fires in OTHER tabs/windows,
+ * never the one that made the write, so reloading here on that event and
+ * re-rendering keeps every open tab converged on whichever tab wrote last,
+ * instead of each one clobbering the other in the background. */
+function bindCrossTabPlaylistSync() {
+  window.addEventListener("storage", (event) => {
+    if (event.key !== playlists.STORAGE_KEY) return;
+    state.playlists = playlists.loadPlaylists();
+    if (state.tracks.length) playlists.migratePlaylists(state.trackById);
+    renderAll();
+  });
+}
+
 async function init() {
   greetConsole();
   applyCelebration();
   state.playlists = playlists.loadPlaylists();
+  bindCrossTabPlaylistSync();
   initRender(renderActions);
   bindEvents({ onRetryData: () => loadData() });
   bindMediaSession();

@@ -49,6 +49,23 @@ test("migratePlaylists leaves far-off orphans alone", () => {
   assert.deepEqual(state.playlists.liked, ["vidAAA-118"]);
 });
 
+test("migratePlaylists prunes ids whose video is gone entirely", () => {
+  /* Unlike a far-off orphan (video still present, just no close match), a
+   * video missing from tracksByVideo altogether is truly dead — the id must
+   * be dropped, not kept forever inflating liked/playlist counts. */
+  state.playlists = {
+    liked: ["vidAAA-118", "vidBBB-40"],
+    custom: [{ id: "playlist-x", name: "Mix", trackIds: ["vidAAA-118"] }]
+  };
+  const trackById = trackByIdOf([{ id: "vidBBB-40", videoId: "vidBBB", startSeconds: 40 }]);
+
+  const changed = migratePlaylists(trackById);
+
+  assert.equal(changed, true);
+  assert.deepEqual(state.playlists.liked, ["vidBBB-40"]);
+  assert.deepEqual(state.playlists.custom[0].trackIds, []);
+});
+
 test("migratePlaylists is a no-op when everything resolves", () => {
   state.playlists = { liked: ["vidAAA-120"], custom: [] };
   const trackById = trackByIdOf([

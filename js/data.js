@@ -61,8 +61,12 @@ function cleanSourceLabel(source) {
     .replace(/【([^】]*)】/g, (match, inner) => (NOISE_BRACKET_RE.test(cleanText(inner)) ? " " : match))
     .replace(/^\[([^\]]*)\]\s*/, (match, inner) => (NOISE_BRACKET_RE.test(cleanText(inner)) ? "" : match));
   const stripped = cleanText(withoutNoise) || cleanText(source);
-  if (stripped.length > 60) return `${stripped.slice(0, 59).trimEnd()}…`;
-  return stripped;
+  if (stripped.length <= 60) return stripped;
+  /* String.slice counts UTF-16 code units, not code points — cutting at a
+   * fixed unit offset can land inside an astral character's surrogate pair
+   * (common in VOD titles carrying emoji) and render the lone leftover
+   * surrogate as mojibake. Spreading the string first splits on code points. */
+  return `${[...stripped].slice(0, 59).join("").trimEnd()}…`;
 }
 
 export function enrichTrack(raw, index = 0) {

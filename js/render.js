@@ -716,14 +716,31 @@ function renderAbout() {
     && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   stats.forEach(([node, value]) => {
     if (animate) countUp(node, value);
-    else node.textContent = String(value);
+    else setStatNow(node, value);
   });
   if (state.dataStatus !== "loading") aboutHasCounted = true;
 }
 
+/* Per-node run id so a stale countUp() loop can tell it's been superseded.
+ * Leaving the About view and returning within one animation's ~900ms lands
+ * a second renderAbout() while the first call's rAF loop is still ticking
+ * (aboutHasCounted is already true by then, so the second call sets the
+ * text directly) — without this guard the first loop keeps firing after and
+ * overwrites the current value with its own stale target on every frame
+ * until it finishes. */
+const countUpRuns = new WeakMap();
+
+function setStatNow(node, value) {
+  countUpRuns.set(node, (countUpRuns.get(node) || 0) + 1);
+  node.textContent = String(value);
+}
+
 function countUp(node, target, duration = 900) {
+  const runId = (countUpRuns.get(node) || 0) + 1;
+  countUpRuns.set(node, runId);
   const start = performance.now();
   const tick = (now) => {
+    if (countUpRuns.get(node) !== runId) return;
     const progress = Math.min(1, (now - start) / duration);
     const eased = 1 - Math.pow(1 - progress, 3);
     node.textContent = String(Math.round(target * eased));

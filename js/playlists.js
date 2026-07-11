@@ -4,7 +4,7 @@
 import { LIKED_ID, state } from "./state.js";
 import { cleanText } from "./utils.js";
 
-const STORAGE_KEY = "shiitunes.playlists.v1";
+export const STORAGE_KEY = "shiitunes.playlists.v1";
 const PLAYLIST_NAME_MAX = 40;
 
 function cleanPlaylistName(value) {
@@ -57,11 +57,15 @@ function savePlaylists() {
  * silently dropping them. */
 const MIGRATE_MAX_DELTA_SECONDS = 120;
 
+/* videoFound distinguishes "this video is still in the catalog, just with no
+ * moment close enough to trust yet" (replacement null, id kept as-is — a
+ * future export may still land a match) from "this video isn't in the
+ * catalog at all anymore" (replacement null, but the id is truly dead). */
 function nearestTrackId(orphanId, tracksByVideo) {
   for (const [videoId, tracks] of tracksByVideo) {
     if (!orphanId.startsWith(`${videoId}-`)) continue;
     const start = Number(orphanId.slice(videoId.length + 1).split("-")[0]);
-    if (!Number.isFinite(start)) return null;
+    if (!Number.isFinite(start)) return { videoFound: true, replacement: null };
     let best = null;
     let bestDelta = Infinity;
     tracks.forEach((track) => {
@@ -71,9 +75,10 @@ function nearestTrackId(orphanId, tracksByVideo) {
         bestDelta = delta;
       }
     });
-    return best && bestDelta <= MIGRATE_MAX_DELTA_SECONDS ? best.id : null;
+    const replacement = best && bestDelta <= MIGRATE_MAX_DELTA_SECONDS ? best.id : null;
+    return { videoFound: true, replacement };
   }
-  return null;
+  return { videoFound: false, replacement: null };
 }
 
 export function migratePlaylists(trackById) {
@@ -84,12 +89,32 @@ export function migratePlaylists(trackById) {
   });
 
   let changed = false;
-  const remapIds = (ids) => uniqueTrackIds(ids.map((id) => {
-    if (trackById.has(id)) return id;
-    const replacement = nearestTrackId(id, tracksByVideo);
-    if (replacement) changed = true;
-    return replacement || id;
-  }));
+  /* A truly dead id (its video isn't in the catalog at all anymore) must be
+   * pruned, not kept — `replacement || id` used to fall back to the dead id
+   * itself, which uniqueTrackIds only strips when it's falsy. That silently
+   * kept ghost ids in `liked`/playlists forever: never rendered or
+   * clickable, but permanently inflating the displayed counts (sidebar,
+   * About page) since those read trackIds.length raw. A far-off orphan whose
+   * video still exists (just no moment close enough to trust yet) is left
+   * alone, same as before. */
+  const remapIds = (ids) => {
+    let anyChanged = false;
+    const mapped = ids.map((id) => {
+      if (trackById.has(id)) return id;
+      const { videoFound, replacement } = nearestTrackId(id, tracksByVideo);
+      if (replacement) {
+        anyChanged = true;
+        return replacement;
+      }
+      if (!videoFound) {
+        anyChanged = true;
+        return null;
+      }
+      return id;
+    });
+    if (anyChanged) changed = true;
+    return uniqueTrackIds(mapped);
+  };
 
   state.playlists.liked = remapIds(state.playlists.liked);
   state.playlists.custom.forEach((playlist) => {
