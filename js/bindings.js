@@ -70,22 +70,12 @@ export function bindEvents({ onRetryData }) {
   nodes.azSortBtn.addEventListener("click", () => setLibrarySort("az"));
   nodes.newestSortBtn.addEventListener("click", () => setLibrarySort("newest"));
 
-  /* Transport buttons stay focused after a mouse click (native <button>
-   * behavior), so a later Enter press — meant to hit whatever's next, like
-   * pausing — instead re-activates the still-focused button (e.g. Next)
-   * and fires it again. Blurring right after the click clears that stale
-   * focus without touching real keyboard activation (Enter already fired
-   * the click; blurring afterward just drops the leftover focus ring). */
-  const blurAfter = (handler) => (event) => {
-    handler(event);
-    event.currentTarget.blur();
-  };
-  nodes.playBtn.addEventListener("click", blurAfter(togglePlayback));
-  nodes.heroPlayBtn.addEventListener("click", blurAfter(togglePlayback));
-  nodes.prevBtn.addEventListener("click", blurAfter(handlePrev));
-  nodes.nextBtn.addEventListener("click", blurAfter(() => moveBy(1)));
-  nodes.shuffleBtn.addEventListener("click", blurAfter(toggleShuffle));
-  nodes.repeatBtn.addEventListener("click", blurAfter(cycleRepeat));
+  nodes.playBtn.addEventListener("click", togglePlayback);
+  nodes.heroPlayBtn.addEventListener("click", togglePlayback);
+  nodes.prevBtn.addEventListener("click", handlePrev);
+  nodes.nextBtn.addEventListener("click", () => moveBy(1));
+  nodes.shuffleBtn.addEventListener("click", toggleShuffle);
+  nodes.repeatBtn.addEventListener("click", cycleRepeat);
 
   /* Current-track buttons no-op until a track exists (initial data load). */
   const withCurrentTrack = (handler) => () => {
@@ -129,6 +119,24 @@ export function bindEvents({ onRetryData }) {
   bindSeekBar();
   bindGlobalShortcuts();
   bindGlobalContextMenu();
+  bindButtonBlurOnClick();
+}
+
+/* Any <button> stays focused after a mouse click (native behavior), so a
+ * later Space/Enter press — meant to do something else, like toggling
+ * play/pause — instead re-activates the still-focused button again (e.g.
+ * clicking the like button, then pressing space to pause, "likes" it a
+ * second time instead). This affects every button in the app, not just
+ * transport controls, so it's handled once here instead of per-handler.
+ * Keyboard-activated clicks (Space/Enter on a focused button) report
+ * event.detail === 0; real mouse clicks report >= 1 — only blur the mouse
+ * case, so tabbing/keyboard users keep normal focus behavior. */
+function bindButtonBlurOnClick() {
+  document.addEventListener("click", (event) => {
+    if (event.detail === 0) return;
+    const button = event.target.closest("button");
+    if (button) button.blur();
+  });
 }
 
 /* Picking the already-active option turns the timer off — the moon button
