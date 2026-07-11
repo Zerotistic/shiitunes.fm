@@ -14,6 +14,7 @@ let ytReady = false;
 let apiPromise = null;
 let progressTimer = null;
 let loadedTrack = null;
+let loadedAt = 0;
 let desiredVolume = null;
 /* A play intent not yet confirmed by a PLAYING event. If the player comes to
  * rest CUED instead (an autoplay attempt the browser swallowed), one nudge
@@ -125,7 +126,10 @@ function loadYouTubeApi(track, { autoplay = false } = {}) {
             /* The boot video is baked into the iframe src — record it so the
              * awaiting caller takes the playVideo/skip path, not a redundant
              * loadVideoById that would restart the load. */
-            if (bootTrack) loadedTrack = bootTrack;
+            if (bootTrack) {
+              loadedTrack = bootTrack;
+              loadedAt = Date.now();
+            }
             tagYouTubeIframe();
             disableCaptions();
             if (desiredVolume !== null) ytPlayer.setVolume(desiredVolume);
@@ -235,6 +239,7 @@ export async function playTrack(track) {
     const player = await loadYouTubeApi(track, { autoplay: true });
     if (loadedTrack?.id !== track.id) {
       loadedTrack = track;
+      loadedAt = Date.now();
       player.loadVideoById(request);
     } else if (typeof player.playVideo === "function") {
       player.playVideo();
@@ -257,6 +262,7 @@ export async function cueTrack(track) {
      * re-cueing would just refetch it. */
     if (loadedTrack?.id !== track.id) {
       loadedTrack = track;
+      loadedAt = Date.now();
       player.cueVideoById(request);
     }
     return true;
@@ -277,6 +283,7 @@ export function cueIfLoaded(track) {
   if (typeof ytPlayer.cueVideoById !== "function") return false;
   stopProgressTimer();
   loadedTrack = track;
+  loadedAt = Date.now();
   ytPlayer.cueVideoById(playbackRequest(track));
   return true;
 }
@@ -331,6 +338,17 @@ function stopProgressTimer() {
  * still catching a moment that blows past its boundary. */
 const END_GUARD_SLACK_SECONDS = 2;
 
+/* Right after loadVideoById/cueVideoById, getCurrentTime() can keep
+ * reporting the OUTGOING video's position for a few hundred ms while the
+ * seek catches up — worst when back-to-back tracks share the same videoId
+ * (multiple singing moments cut from one VOD) and the player just seeks in
+ * place instead of doing a full reload. If a timer tick lands in that
+ * window, elapsed is computed against the stale position and the new
+ * track's (often much shorter) duration, blows past it instantly, and the
+ * guard below fires a phantom skip. Holding the guard off for a beat after
+ * every load gives getCurrentTime() time to catch up to the real seek. */
+const END_GUARD_ARM_DELAY_MS = 1500;
+
 /* checkEnd only on live timer ticks. Seeks (and drags, and seeks while
  * paused) also emit — if those ran the guard, scrubbing near the end of a
  * song would fire onEnded and auto-advance: a phantom skip. */
@@ -338,7 +356,8 @@ function emitProgress({ checkEnd = false } = {}) {
   if (!loadedTrack) return;
   const elapsed = playedSeconds();
   const duration = loadedTrack.duration || null;
-  if (checkEnd && duration && elapsed > duration + END_GUARD_SLACK_SECONDS) {
+  const armed = Date.now() - loadedAt > END_GUARD_ARM_DELAY_MS;
+  if (checkEnd && armed && duration && elapsed > duration + END_GUARD_SLACK_SECONDS) {
     stopProgressTimer();
     handlers.onEnded({ cappedStop: false });
     return;
