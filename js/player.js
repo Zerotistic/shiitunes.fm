@@ -224,6 +224,12 @@ function playbackRequest(track) {
 /* Resolves true when playback was handed to YouTube, false on API failure. */
 export async function playTrack(track) {
   const request = playbackRequest(track);
+  /* A timer from the outgoing track can still be ticking here (only ENDED/
+   * PAUSED stop it) — left running, it fires mid-load with the reassigned
+   * loadedTrack below but getCurrentTime() still on the old video, reads a
+   * huge bogus elapsed, and end-guards the new track before it even starts.
+   * That was the "skip lands, then instantly skips again" bug. */
+  stopProgressTimer();
   try {
     pendingPlay = true;
     const player = await loadYouTubeApi(track, { autoplay: true });

@@ -70,12 +70,22 @@ export function bindEvents({ onRetryData }) {
   nodes.azSortBtn.addEventListener("click", () => setLibrarySort("az"));
   nodes.newestSortBtn.addEventListener("click", () => setLibrarySort("newest"));
 
-  nodes.playBtn.addEventListener("click", togglePlayback);
-  nodes.heroPlayBtn.addEventListener("click", togglePlayback);
-  nodes.prevBtn.addEventListener("click", handlePrev);
-  nodes.nextBtn.addEventListener("click", () => moveBy(1));
-  nodes.shuffleBtn.addEventListener("click", toggleShuffle);
-  nodes.repeatBtn.addEventListener("click", cycleRepeat);
+  /* Transport buttons stay focused after a mouse click (native <button>
+   * behavior), so a later Enter press — meant to hit whatever's next, like
+   * pausing — instead re-activates the still-focused button (e.g. Next)
+   * and fires it again. Blurring right after the click clears that stale
+   * focus without touching real keyboard activation (Enter already fired
+   * the click; blurring afterward just drops the leftover focus ring). */
+  const blurAfter = (handler) => (event) => {
+    handler(event);
+    event.currentTarget.blur();
+  };
+  nodes.playBtn.addEventListener("click", blurAfter(togglePlayback));
+  nodes.heroPlayBtn.addEventListener("click", blurAfter(togglePlayback));
+  nodes.prevBtn.addEventListener("click", blurAfter(handlePrev));
+  nodes.nextBtn.addEventListener("click", blurAfter(() => moveBy(1)));
+  nodes.shuffleBtn.addEventListener("click", blurAfter(toggleShuffle));
+  nodes.repeatBtn.addEventListener("click", blurAfter(cycleRepeat));
 
   /* Current-track buttons no-op until a track exists (initial data load). */
   const withCurrentTrack = (handler) => () => {
